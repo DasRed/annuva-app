@@ -21,3 +21,24 @@ jobs:
       dockhand-token: ${{ secrets.DOCKHAND_TOKEN }}
     with:
       dockhand-environment: chronos
+
+  # The reusable pipeline deploys a single container only, so the demo instance is updated here.
+  # Images are only published for releases on main; a run without a release just redeploys the current latest image.
+  deploy-demo:
+    name:    Deploy Demo via Dockhand
+    runs-on: ubuntu-26.04
+    needs:   pipeline
+
+    permissions: { }
+
+    if: github.event_name != 'pull_request' && github.ref_name == 'main'
+
+    steps:
+      - name: Update Container
+        uses: DasRed/github-workflows/.github/actions/dockhand-update@v1
+        with:
+          host:           https://dockhand.dasred.de
+          environment:    chronos
+          container_name: annuva-demo
+          image:          ghcr.io/dasred/annuva-app:latest
+          token:          ${{ secrets.DOCKHAND_TOKEN }}
