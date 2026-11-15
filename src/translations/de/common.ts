@@ -10,6 +10,7 @@ const common: Record<keyof typeof commonEn, string> = {
     'common.delete':            'Löschen',
     'common.deleteMessage':     'Das kann nicht rückgängig gemacht werden.',
     'common.deleteTitle':       '{entity} löschen?',
+    'common.download':          'Herunterladen',
     'common.edit':              'Bearbeiten',
     'common.editEntity':        '{entity} bearbeiten',
     'common.empty':             'Hier ist noch nichts.',

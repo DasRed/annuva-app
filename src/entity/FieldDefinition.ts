@@ -6,6 +6,8 @@ import type FieldType from '@/entity/FieldType';
  * the REST API, the OpenAPI document, the MCP tools and the generic UI (tables and forms).
  */
 export default interface FieldDefinition {
+    /** Accepted file types of a file field, e.g. "image/*". */
+    accept?: string;
     /** Default value for new records. */
     default?: boolean | number | string | null;
     /** Show the field in list tables. */

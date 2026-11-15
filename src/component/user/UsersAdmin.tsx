@@ -1,6 +1,6 @@
 'use client';
 
-import {IconPlus, IconTrash} from '@tabler/icons-react';
+import {IconPlus, IconShieldCheck, IconShieldOff, IconTrash} from '@tabler/icons-react';
 import {useCallback, useEffect, useState} from 'react';
 import apiFetch from '@/client/apiFetch';
 import ApiClientError from '@/client/ApiClientError';
@@ -18,7 +18,7 @@ import Skeleton from '@/component/ui/Skeleton';
 import useI18n from '@/i18n/useI18n';
 import isStrongPassword from '@/validation/isStrongPassword';
 
-type User = { active: boolean; avatarUrl: string | null; email: string; id: string; lastLoginAt: string | null; name: string; role: string };
+type User = { active: boolean; avatarUrl: string | null; email: string; id: string; lastLoginAt: string | null; name: string; role: string; twoFactorEnabled: boolean };
 
 /**
  * User management of the tenant (admins only): create, edit, deactivate, delete.
@@ -105,6 +105,7 @@ export default function UsersAdmin({currentUserId, mailEnabled}: { currentUserId
                                         <span className="block truncate text-sm text-text-muted">{user.email}</span>
                                     </span>
                                     <Pill tone={user.role === 'admin' ? 'accent' : 'neutral'}>{t(user.role === 'admin' ? 'users.role.admin' : 'users.role.user')}</Pill>
+                                    {user.twoFactorEnabled ? <Pill tone="positive" icon={<IconShieldCheck size={14}/>}>2FA</Pill> : null}
                                     {!user.active ? <Pill tone="warning">{t('users.inactive')}</Pill> : null}
                                     <span className="w-full text-xs text-text-muted sm:w-auto">{t('users.lastLogin', {date: date(user.lastLoginAt, true)})}</span>
                                 </button>
@@ -177,6 +178,24 @@ export default function UsersAdmin({currentUserId, mailEnabled}: { currentUserId
                             <input id="user-password" type="password" autoComplete="new-password" className={inputClass} value={form.password} onChange={(event) => setForm({...form, password: event.target.value})}/>
                         </FormField>
                     </div>
+                    {editing !== null && editing !== 'new' && editing.twoFactorEnabled ? (
+                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface-2 p-3">
+                            <span className="flex items-center gap-2 text-sm"><IconShieldCheck size={18} stroke={1.75} className="text-positive"/>{t('users.twoFactorActive')}</span>
+                            <ConfirmButton size="sm" variant="ghost" icon={<IconShieldOff size={16} stroke={1.75}/>} title={t('users.resetTwoFactorTitle')} message={t('users.resetTwoFactorMessage')} confirmLabel={t('users.resetTwoFactor')}
+                                           onConfirm={async () => {
+                                               try {
+                                                   await apiFetch(`/api/v1/users/${editing.id}/two-factor`, {method: 'DELETE'});
+                                                   setEditing({...editing, twoFactorEnabled: false});
+                                                   await load();
+                                               }
+                                               catch (exception) {
+                                                   setError(exception instanceof ApiClientError ? exception.message : t('common.error'));
+                                               }
+                                           }}>
+                                {t('users.resetTwoFactor')}
+                            </ConfirmButton>
+                        </div>
+                    ) : null}
                     {!mailEnabled ? <p className="text-xs text-text-muted">{t('users.noMailHint')}</p> : null}
                 </div>
             </Dialog>

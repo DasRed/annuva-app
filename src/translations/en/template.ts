@@ -21,6 +21,8 @@ const template = {
     'hint.invoiceTemplates.logoFileId':       'Top right instead of the company name. PNG or JPG, ideally with a transparent background.',
     'hint.invoiceTemplates.name':             'Only for you – it is not printed.',
     'hint.invoiceTemplates.paymentTermDays':  'Due date = invoice date + these days.',
+    'hint.invoiceTemplates.signatureFileId':  'Scanned signature, placed after the closing text. A PNG with transparent background looks best.',
+    'hint.invoiceTemplates.signatureName':    'Printed below the signature, e.g. your name.',
     'hint.invoiceTemplates.senderLine':       'Small line above the address (visible in window envelopes). Empty: company name and address.',
 
     'placeholder.invoiceTemplates.accentColor':  '#0f6b5c',
@@ -31,7 +33,8 @@ const template = {
     'placeholder.invoiceTemplates.introText':    'Thank you for your order. I am invoicing the following services:',
     'placeholder.invoiceTemplates.name':         'e.g. Standard, Agency customers, English',
     'placeholder.invoiceTemplates.paymentTermDays': '14',
-    'placeholder.invoiceTemplates.senderLine':   'Example IT · 1 Example Street · London',
+    'placeholder.invoiceTemplates.signatureName': 'John Smith',
+    'placeholder.invoiceTemplates.senderLine':   'Example IT – 1 Example Street – London',
 };
 
 export default template;

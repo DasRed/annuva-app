@@ -120,6 +120,46 @@ describe('services with SQLite', () => {
         expect((await renderInvoicePdf(snapshot, false)).subarray(0, 4).toString()).toBe('%PDF');
     });
 
+    it('signs in with two-factor authentication', async () => {
+        const {default: TwoFactorService} = await import('@/server/auth/TwoFactorService');
+        const {default: AuthService} = await import('@/server/auth/AuthService');
+        const {default: base32Decode} = await import('@/server/totp/base32Decode');
+        const {default: totpCode} = await import('@/server/totp/totpCode');
+        const {default: totpStep} = await import('@/server/totp/totpStep');
+        const service = new TwoFactorService();
+        const ui = {...context, via: 'ui' as const};
+        const meta = {ip: '127.0.0.1', userAgent: 'test'};
+        const credentials = {email: 'admin@example.com', password: 'Very-secret-passw0rd'};
+
+        await expect(service.setup(context)).rejects.toThrow(/only be changed in the app/);
+        const setup = await service.setup(ui);
+        expect(setup.uri).toMatch(/^otpauth:\/\/totp\/Annuva%3Aadmin%40example\.com\?secret=/);
+        expect(setup.qrCode).toContain('<svg');
+        const secret = base32Decode(setup.secret);
+        const step = totpStep(Date.now());
+        await expect(service.enable(ui, {code: '000000'})).rejects.toThrow(/not valid/);
+        const {recoveryCodes} = await service.enable(ui, {code: totpCode(secret, step)});
+        expect(recoveryCodes).toHaveLength(10);
+        expect(await service.status(ui)).toEqual({enabled: true, recoveryCodesLeft: 10});
+
+        const auth = new AuthService();
+        const first = await auth.login(credentials, meta);
+        expect(first.twoFactorRequired).toBe(true);
+        const challenge = (first as { challenge: string }).challenge;
+        // the code used for enabling cannot be replayed
+        await expect(auth.loginTwoFactor({challenge, code: totpCode(secret, step)}, meta)).rejects.toThrow(/not valid/);
+        await expect(auth.loginTwoFactor({challenge: `${challenge}x`, code: totpCode(secret, step + 1)}, meta)).rejects.toThrow(/expired/);
+        expect((await auth.loginTwoFactor({challenge, code: totpCode(secret, step + 1)}, meta)).token).toBeTruthy();
+
+        expect((await auth.loginTwoFactor({challenge, code: recoveryCodes[0].toUpperCase()}, meta)).token).toBeTruthy();
+        await expect(auth.loginTwoFactor({challenge, code: recoveryCodes[0]}, meta)).rejects.toThrow(/not valid/);
+        expect((await service.status(ui)).recoveryCodesLeft).toBe(9);
+
+        await expect(service.disable(ui, {code: recoveryCodes[1], password: 'wrong'})).rejects.toThrow(/password/);
+        await service.disable(ui, {code: recoveryCodes[1], password: credentials.password});
+        expect((await auth.login(credentials, meta)).twoFactorRequired).toBe(false);
+    });
+
     it('authenticates API tokens', async () => {
         const {default: TokenService} = await import('@/server/token/TokenService');
         const {default: getRequestContext} = await import('@/server/auth/getRequestContext');

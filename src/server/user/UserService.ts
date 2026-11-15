@@ -111,20 +111,24 @@ export default class UserService {
         }
         const now = nowIso();
         const user: UserTable = {
-            active:       1,
-            avatarFileId: null,
-            createdAt:    now,
+            active:            1,
+            avatarFileId:      null,
+            createdAt:         now,
             email,
-            id:           newId(),
-            lastLoginAt:  null,
-            locale:       data.locale ?? getConfig().defaultLocale,
-            name:         data.name,
-            passwordHash: await hashPassword(data.password),
-            role:         data.role,
-            tenantId:     data.tenantId,
-            theme:        'system',
-            timezone:     data.timezone ?? getConfig().defaultTimezone,
-            updatedAt:    now,
+            id:                newId(),
+            lastLoginAt:       null,
+            locale:            data.locale ?? getConfig().defaultLocale,
+            name:              data.name,
+            passwordHash:      await hashPassword(data.password),
+            role:              data.role,
+            tenantId:          data.tenantId,
+            theme:             'system',
+            timezone:          data.timezone ?? getConfig().defaultTimezone,
+            totpEnabledAt:     null,
+            totpLastStep:      null,
+            totpRecoveryCodes: null,
+            totpSecret:        null,
+            updatedAt:         now,
         };
         await db.insertInto('users').values(user).execute();
         return toPublicUser(user);

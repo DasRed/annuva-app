@@ -41,7 +41,7 @@ export default function Dialog({children, footer, onClose, open, size = 'md', ti
                 event.preventDefault();
                 onClose();
             }}
-            className={`m-0 mt-auto h-auto max-h-[92dvh] w-full max-w-none overflow-hidden rounded-t-2xl border border-line bg-surface p-0 text-text shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-[2px] sm:m-auto sm:rounded-2xl ${width} open:animate-pop`}
+            className={`m-0 mt-auto h-fit max-h-[92dvh] w-full max-w-none overflow-hidden rounded-t-2xl border border-line bg-surface p-0 text-text shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-[2px] sm:m-auto sm:rounded-2xl ${width} open:animate-pop`}
         >
             {open ? (
                 <div className="flex max-h-[92dvh] flex-col">

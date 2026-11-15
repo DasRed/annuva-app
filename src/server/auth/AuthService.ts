@@ -11,12 +11,15 @@ import hashToken from '@/server/security/hashToken';
 import passwordSchema from '@/server/security/passwordSchema';
 import verifyPassword from '@/server/security/verifyPassword';
 import TenantService from '@/server/tenant/TenantService';
+import TwoFactorService from '@/server/auth/TwoFactorService';
+import twoFactorChallenge from '@/server/auth/twoFactorChallenge';
 import UserService from '@/server/user/UserService';
 import nowIso from '@/server/util/nowIso';
 import randomToken from '@/server/util/randomToken';
 import parseInput from '@/server/validation/parseInput';
 
 const loginSchema = z.object({email: z.string().trim().min(1), password: z.string().min(1)});
+const twoFactorSchema = z.object({challenge: z.string().min(10).max(500), code: z.string().trim().min(1).max(32)});
 const resetRequestSchema = z.object({email: z.email()});
 const resetSchema = z.object({password: passwordSchema, token: z.string().min(10)});
 const registerSchema = z.object({
@@ -33,7 +36,11 @@ const RESET_VALIDITY_MS = 2 * 60 * 60 * 1000;
  * Login, logout, password reset and (in multi-tenant mode) self-registration.
  */
 export default class AuthService {
-    async login(input: unknown, meta: { ip: string | null; userAgent: string | null }): Promise<{ expiresAt: Date; token: string; user: UserTable }> {
+    /**
+     * First login step. Users with two-factor authentication get a short-lived challenge instead of
+     * a session and continue with loginTwoFactor().
+     */
+    async login(input: unknown, meta: { ip: string | null; userAgent: string | null }): Promise<{ challenge: string; twoFactorRequired: true } | { expiresAt: Date; token: string; twoFactorRequired: false; user: UserTable }> {
         const data = parseInput(loginSchema, input);
         const email = data.email.toLowerCase();
         const key = `${meta.ip ?? 'unknown'}|${email}`;
@@ -45,6 +52,30 @@ export default class AuthService {
         if (user === undefined || user.active !== 1 || !(await verifyPassword(data.password, user.passwordHash))) {
             loginRateLimit.recordFailure(key);
             throw new ApiError(401, 'invalid_credentials', 'E-mail or password is wrong.');
+        }
+        loginRateLimit.reset(key);
+        if (user.totpEnabledAt !== null) {
+            return {challenge: twoFactorChallenge.create(user.id), twoFactorRequired: true};
+        }
+        const session = await createSession(user.id, meta.userAgent, meta.ip);
+        return {...session, twoFactorRequired: false, user};
+    }
+
+    /** Second login step: the challenge from login() plus a code from the app or a recovery code. */
+    async loginTwoFactor(input: unknown, meta: { ip: string | null; userAgent: string | null }): Promise<{ expiresAt: Date; token: string; user: UserTable }> {
+        const data = parseInput(twoFactorSchema, input);
+        const userId = twoFactorChallenge.verify(data.challenge);
+        if (userId === null) {
+            throw new ApiError(401, 'challenge_expired', 'The login has expired. Please sign in again.');
+        }
+        const key = `2fa|${userId}`;
+        if (loginRateLimit.isBlocked(key)) {
+            throw new ApiError(429, 'too_many_attempts', 'Too many failed attempts. Please wait a few minutes.');
+        }
+        const user = await new UserService().getRow(userId);
+        if (user.active !== 1 || !(await new TwoFactorService().verifyLogin(user, data.code))) {
+            loginRateLimit.recordFailure(key);
+            throw new ApiError(401, 'invalid_code', 'The code is not valid.');
         }
         loginRateLimit.reset(key);
         const session = await createSession(user.id, meta.userAgent, meta.ip);

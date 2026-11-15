@@ -8,6 +8,7 @@ const common = {
     'common.delete':            'Delete',
     'common.deleteMessage':     'This cannot be undone.',
     'common.deleteTitle':       'Delete {entity}?',
+    'common.download':          'Download',
     'common.edit':              'Edit',
     'common.editEntity':        'Edit {entity}',
     'common.empty':             'Nothing here yet.',

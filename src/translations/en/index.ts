@@ -6,6 +6,7 @@ import dashboard from '@/translations/en/dashboard';
 import entity from '@/translations/en/entity';
 import nav from '@/translations/en/nav';
 import pdf from '@/translations/en/pdf';
+import security from '@/translations/en/security';
 import template from '@/translations/en/template';
 
 /**
@@ -20,6 +21,7 @@ const en = {
     ...entity,
     ...nav,
     ...pdf,
+    ...security,
     ...template,
 };
 

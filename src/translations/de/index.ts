@@ -6,6 +6,7 @@ import dashboard from '@/translations/de/dashboard';
 import entity from '@/translations/de/entity';
 import nav from '@/translations/de/nav';
 import pdf from '@/translations/de/pdf';
+import security from '@/translations/de/security';
 import template from '@/translations/de/template';
 import type en from '@/translations/en/index';
 
@@ -18,6 +19,7 @@ const de: Record<keyof typeof en, string> = {
     ...entity,
     ...nav,
     ...pdf,
+    ...security,
     ...template,
 };
 

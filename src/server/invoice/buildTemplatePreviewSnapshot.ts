@@ -5,7 +5,7 @@ import addMonths from '@/server/invoice/addMonths';
 import calculateTotals from '@/server/invoice/calculateTotals';
 import formatInvoiceNumber from '@/server/invoice/formatInvoiceNumber';
 import type InvoiceSnapshot from '@/server/invoice/InvoiceSnapshot';
-import loadTemplateLogo from '@/server/invoice/loadTemplateLogo';
+import loadTemplateImage from '@/server/invoice/loadTemplateImage';
 import snapshotLocale from '@/server/invoice/snapshotLocale';
 import snapshotTenant from '@/server/invoice/snapshotTenant';
 import todayIso from '@/server/invoice/todayIso';
@@ -21,6 +21,8 @@ type TemplateValues = {
     logoFileId?: string | null;
     paymentTermDays?: number | null;
     senderLine?: string | null;
+    signatureFileId?: string | null;
+    signatureName?: string | null;
 };
 
 const samples = {
@@ -78,14 +80,16 @@ export default async function buildTemplatePreviewSnapshot(context: AuthContext,
         serviceDateTo:   addDays(addMonths(today, 12), -1),
         tax:             totals.tax,
         template:        {
-            accentColor:  typeof values.accentColor === 'string' && /^#[\da-f]{6}$/i.test(values.accentColor) ? values.accentColor : '#0f6b5c',
-            closingText:  text(values.closingText),
-            footerCenter: text(values.footerCenter),
-            footerLeft:   text(values.footerLeft),
-            footerRight:  text(values.footerRight),
-            introText:    text(values.introText),
-            logo:         await loadTemplateLogo(context, values.logoFileId),
-            senderLine:   text(values.senderLine),
+            accentColor:   typeof values.accentColor === 'string' && /^#[\da-f]{6}$/i.test(values.accentColor) ? values.accentColor : '#0f6b5c',
+            closingText:   text(values.closingText),
+            footerCenter:  text(values.footerCenter),
+            footerLeft:    text(values.footerLeft),
+            footerRight:   text(values.footerRight),
+            introText:     text(values.introText),
+            logo:          await loadTemplateImage(context, values.logoFileId),
+            senderLine:    text(values.senderLine),
+            signature:     await loadTemplateImage(context, values.signatureFileId),
+            signatureName: text(values.signatureName),
         },
         tenant:          snapshotTenant(tenant),
         vatMode:         tenant.vatMode,

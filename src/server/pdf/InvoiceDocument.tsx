@@ -6,30 +6,35 @@ import type InvoiceSnapshot from '@/server/invoice/InvoiceSnapshot';
 
 
 const styles = StyleSheet.create({
-    address:       {fontSize: 10, lineHeight: 1.4, marginTop: 4},
-    amount:        {textAlign: 'right', width: 80},
-    draft:         {color: '#c0392b', fontSize: 60, left: 120, opacity: 0.15, position: 'absolute', top: 340, transform: 'rotate(-30deg)'},
-    footer:        {borderTopColor: '#e4e0d7', borderTopWidth: 1, bottom: 30, flexDirection: 'row', fontSize: 7.5, gap: 12, left: 50, lineHeight: 1.4, paddingTop: 8, position: 'absolute', right: 50},
-    footerColumn:  {flex: 1},
-    header:        {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 40},
-    logo:          {maxHeight: 60, maxWidth: 180, objectFit: 'contain'},
-    meta:          {fontSize: 9, marginTop: 30},
-    metaLabel:     {color: '#6f6b63', width: 110},
-    metaRow:       {flexDirection: 'row', marginBottom: 2},
-    note:          {color: '#555555', fontSize: 9, marginTop: 14},
-    page:          {color: '#1c1c1c', fontFamily: 'Helvetica', fontSize: 10, paddingBottom: 110, paddingHorizontal: 50, paddingTop: 45},
-    position:      {width: 24},
-    quantity:      {textAlign: 'right', width: 50},
-    row:           {borderBottomColor: '#e4e0d7', borderBottomWidth: 0.5, flexDirection: 'row', paddingVertical: 5},
-    sender:        {color: '#6f6b63', fontSize: 7.5, marginBottom: 6, textDecoration: 'underline'},
-    tableHead:     {borderBottomWidth: 1, flexDirection: 'row', fontFamily: 'Helvetica-Bold', fontSize: 9, paddingBottom: 4},
-    text:          {flex: 1, paddingRight: 8},
-    title:         {fontFamily: 'Helvetica-Bold', fontSize: 18, marginBottom: 12, marginTop: 30},
-    totalLabel:    {textAlign: 'right', width: 150},
-    totalRow:      {flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 2},
-    totalStrong:   {fontFamily: 'Helvetica-Bold'},
-    totalValue:    {textAlign: 'right', width: 90},
-    unitPrice:     {textAlign: 'right', width: 80},
+    address:        {fontSize: 10, lineHeight: 1.4, marginTop: 4},
+    amount:         {textAlign: 'right', width: 80},
+    draft:          {color: '#c0392b', fontSize: 60, left: 120, opacity: 0.15, position: 'absolute', top: 340, transform: 'rotate(-30deg)'},
+    footer:         {borderTopColor: '#e4e0d7', borderTopWidth: 1, bottom: 30, flexDirection: 'row', fontSize: 7.5, gap: 12, left: 50, lineHeight: 1.4, paddingTop: 8, position: 'absolute', right: 50},
+    footerColumn:   {flex: 1},
+    header:         {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10},
+    headerRight:    {alignItems: 'flex-end', width: 210},
+    logo:           {maxHeight: 60, maxWidth: 180, objectFit: 'contain'},
+    meta:           {fontSize: 9, marginTop: 16, width: 210},
+    metaLabel:      {color: '#6f6b63', width: 95},
+    metaRow:        {flexDirection: 'row', marginBottom: 2},
+    metaValue:      {flex: 1, textAlign: 'right'},
+    note:           {color: '#555555', fontSize: 9, marginTop: 14},
+    page:           {color: '#1c1c1c', fontFamily: 'Helvetica', fontSize: 10, paddingBottom: 110, paddingHorizontal: 50, paddingTop: 45},
+    position:       {width: 24},
+    quantity:       {textAlign: 'right', width: 50},
+    row:            {borderBottomColor: '#e4e0d7', borderBottomWidth: 0.5, flexDirection: 'row', paddingVertical: 5},
+    sender:         {color: '#6f6b63', fontSize: 7.5, marginBottom: 6, marginTop: 40, textDecoration: 'underline'},
+    signature:      {marginTop: 22},
+    signatureImage: {marginBottom: 2, maxHeight: 50, maxWidth: 170, objectFit: 'contain'},
+    signatureName:  {borderTopColor: '#1c1c1c', borderTopWidth: 0.5, paddingTop: 3, width: 170},
+    tableHead:      {borderBottomWidth: 1, flexDirection: 'row', fontFamily: 'Helvetica-Bold', fontSize: 9, paddingBottom: 4},
+    text:           {flex: 1, paddingRight: 8},
+    title:          {fontFamily: 'Helvetica-Bold', fontSize: 18, marginBottom: 12, marginTop: 30},
+    totalLabel:     {textAlign: 'right', width: 150},
+    totalRow:       {flexDirection: 'row', justifyContent: 'flex-end', paddingVertical: 2},
+    totalStrong:    {fontFamily: 'Helvetica-Bold'},
+    totalValue:     {textAlign: 'right', width: 90},
+    unitPrice:      {textAlign: 'right', width: 80},
 });
 
 /**
@@ -50,25 +55,26 @@ export default function InvoiceDocument({draft, snapshot, t}: {
             <Page size="A4" style={styles.page}>
                 {draft ? <Text style={styles.draft} fixed>{t('pdf.draft')}</Text> : null}
                 <View style={styles.header}>
-                    <View>
-                        <Text style={styles.sender}>{snapshot.template.senderLine ?? [snapshot.tenant.companyName, snapshot.tenant.address?.replaceAll('\n', ', ')].filter(Boolean).join(' · ')}</Text>
+                    <View style={{flex: 1, paddingRight: 20}}>
+                        <Text style={styles.sender}>{snapshot.template.senderLine ?? [snapshot.tenant.companyName, snapshot.tenant.address?.replaceAll('\n', ', ')].filter(Boolean).join(' – ')}</Text>
                         <Text style={{fontFamily: 'Helvetica-Bold'}}>{snapshot.recipient.name}</Text>
                         {snapshot.recipient.address !== null ? <Text style={styles.address}>{snapshot.recipient.address}</Text> : null}
                     </View>
-                    {snapshot.template.logo !== null ? <Image src={snapshot.template.logo} style={styles.logo}/> : <Text style={[{fontFamily: 'Helvetica-Bold', fontSize: 14}, accent]}>{snapshot.tenant.companyName}</Text>}
-                </View>
-
-                <View style={styles.meta}>
-                    <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.number')}</Text><Text>{snapshot.number ?? '–'}</Text></View>
-                    <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.date')}</Text><Text>{date(snapshot.date)}</Text></View>
-                    {snapshot.serviceDateFrom !== null ? (
-                        <View style={styles.metaRow}>
-                            <Text style={styles.metaLabel}>{t('pdf.servicePeriod')}</Text>
-                            <Text>{snapshot.serviceDateTo !== null && snapshot.serviceDateTo !== snapshot.serviceDateFrom ? `${date(snapshot.serviceDateFrom)} – ${date(snapshot.serviceDateTo)}` : date(snapshot.serviceDateFrom)}</Text>
+                    <View style={styles.headerRight}>
+                        {snapshot.template.logo !== null ? <Image src={snapshot.template.logo} style={styles.logo}/> : <Text style={[{fontFamily: 'Helvetica-Bold', fontSize: 14}, accent]}>{snapshot.tenant.companyName}</Text>}
+                        <View style={styles.meta}>
+                            <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.number')}</Text><Text style={styles.metaValue}>{snapshot.number ?? '–'}</Text></View>
+                            <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.date')}</Text><Text style={styles.metaValue}>{date(snapshot.date)}</Text></View>
+                            {snapshot.serviceDateFrom !== null ? (
+                                <View style={styles.metaRow}>
+                                    <Text style={styles.metaLabel}>{t('pdf.servicePeriod')}</Text>
+                                    <Text style={styles.metaValue}>{snapshot.serviceDateTo !== null && snapshot.serviceDateTo !== snapshot.serviceDateFrom ? `${date(snapshot.serviceDateFrom)} – ${date(snapshot.serviceDateTo)}` : date(snapshot.serviceDateFrom)}</Text>
+                                </View>
+                            ) : null}
+                            {snapshot.dueDate !== null && snapshot.cancelsNumber === null ? <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.dueDate')}</Text><Text style={styles.metaValue}>{date(snapshot.dueDate)}</Text></View> : null}
+                            {snapshot.tenant.vatId !== null ? <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.vatId')}</Text><Text style={styles.metaValue}>{snapshot.tenant.vatId}</Text></View> : null}
                         </View>
-                    ) : null}
-                    {snapshot.dueDate !== null && snapshot.cancelsNumber === null ? <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.dueDate')}</Text><Text>{date(snapshot.dueDate)}</Text></View> : null}
-                    {snapshot.tenant.vatId !== null ? <View style={styles.metaRow}><Text style={styles.metaLabel}>{t('pdf.vatId')}</Text><Text>{snapshot.tenant.vatId}</Text></View> : null}
+                    </View>
                 </View>
 
                 <Text style={[styles.title, accent]}>{title} {snapshot.number ?? ''}</Text>
@@ -110,6 +116,12 @@ export default function InvoiceDocument({draft, snapshot, t}: {
                 {snapshot.cancelsNumber === null && snapshot.dueDate !== null ? <Text style={styles.note}>{t('pdf.paymentNote', {date: date(snapshot.dueDate)})}</Text> : null}
                 {snapshot.notes !== null ? <Text style={styles.note}>{snapshot.notes}</Text> : null}
                 {snapshot.template.closingText !== null ? <Text style={[styles.note, {color: '#1c1c1c'}]}>{snapshot.template.closingText}</Text> : null}
+                {(snapshot.template.signature ?? null) !== null || (snapshot.template.signatureName ?? null) !== null ? (
+                    <View style={styles.signature} wrap={false}>
+                        {(snapshot.template.signature ?? null) !== null ? <Image src={snapshot.template.signature!} style={styles.signatureImage}/> : <View style={{height: 36}}/>}
+                        {(snapshot.template.signatureName ?? null) !== null ? <Text style={styles.signatureName}>{snapshot.template.signatureName}</Text> : null}
+                    </View>
+                ) : null}
 
                 <View style={styles.footer} fixed>
                     <Text style={styles.footerColumn}>{snapshot.template.footerLeft ?? [snapshot.tenant.companyName, snapshot.tenant.address].filter(Boolean).join('\n')}</Text>

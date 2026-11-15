@@ -4,7 +4,7 @@ import getDb from '@/server/db/getDb';
 import type InvoiceLineTable from '@/server/db/table/InvoiceLineTable';
 import calculateTotals from '@/server/invoice/calculateTotals';
 import type InvoiceSnapshot from '@/server/invoice/InvoiceSnapshot';
-import loadTemplateLogo from '@/server/invoice/loadTemplateLogo';
+import loadTemplateImage from '@/server/invoice/loadTemplateImage';
 import snapshotLocale from '@/server/invoice/snapshotLocale';
 import snapshotTenant from '@/server/invoice/snapshotTenant';
 import TenantService from '@/server/tenant/TenantService';
@@ -27,7 +27,7 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
                       ? await templateQuery.where('id', '=', invoice.templateId).executeTakeFirst()
                       : await templateQuery.orderBy('isDefault', 'desc').orderBy('createdAt').executeTakeFirst()) as Row | undefined;
 
-    const logo = await loadTemplateLogo(context, template?.logoFileId);
+    const logo = await loadTemplateImage(context, template?.logoFileId);
     const language = invoice.language === 'en' ? 'en' : 'de';
 
     const cancelled = invoice.cancelsInvoiceId === null
@@ -64,14 +64,16 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
         serviceDateTo:   invoice.serviceDateTo,
         tax:             totals.tax,
         template:        {
-            accentColor:  template?.accentColor ?? '#0f6b5c',
-            closingText:  template?.closingText ?? null,
-            footerCenter: template?.footerCenter ?? null,
-            footerLeft:   template?.footerLeft ?? null,
-            footerRight:  template?.footerRight ?? null,
-            introText:    template?.introText ?? null,
+            accentColor:   template?.accentColor ?? '#0f6b5c',
+            closingText:   template?.closingText ?? null,
+            footerCenter:  template?.footerCenter ?? null,
+            footerLeft:    template?.footerLeft ?? null,
+            footerRight:   template?.footerRight ?? null,
+            introText:     template?.introText ?? null,
             logo,
-            senderLine:   template?.senderLine ?? null,
+            senderLine:    template?.senderLine ?? null,
+            signature:     await loadTemplateImage(context, template?.signatureFileId),
+            signatureName: template?.signatureName ?? null,
         },
         tenant:          snapshotTenant(tenant),
         vatMode:         tenant.vatMode,

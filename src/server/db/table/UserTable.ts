@@ -12,5 +12,9 @@ export default interface UserTable {
     tenantId: string | null;
     theme: string;
     timezone: string;
+    totpEnabledAt: string | null;
+    totpLastStep: number | null;
+    totpRecoveryCodes: string | null;
+    totpSecret: string | null;
     updatedAt: string;
 }

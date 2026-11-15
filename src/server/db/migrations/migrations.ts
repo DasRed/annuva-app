@@ -1,5 +1,6 @@
 import type {Migration} from 'kysely/migration';
 import initial from '@/server/db/migrations/0001_initial';
+import signatureAndTwoFactor from '@/server/db/migrations/0002_signature_and_two_factor';
 
 /**
  * All migrations in order. Migrations are registered statically, so they are part of the
@@ -7,7 +8,8 @@ import initial from '@/server/db/migrations/0001_initial';
  * add a new one instead.
  */
 const migrations: Record<string, Migration> = {
-    '0001_initial': initial,
+    '0001_initial':                    initial,
+    '0002_signature_and_two_factor':  signatureAndTwoFactor,
 };
 
 export default migrations;

@@ -2,9 +2,10 @@ import type AuthContext from '@/server/auth/AuthContext';
 import readStoredFile from '@/server/file/readStoredFile';
 
 /**
- * Logo of an invoice template as data URL for the PDF; null when missing or unreadable.
+ * Image of an invoice template (logo, signature) as data URL for the PDF; null when missing or
+ * unreadable.
  */
-export default async function loadTemplateLogo(context: AuthContext, fileId: string | null | undefined): Promise<string | null> {
+export default async function loadTemplateImage(context: AuthContext, fileId: string | null | undefined): Promise<string | null> {
     if (fileId === null || fileId === undefined || fileId === '') {
         return null;
     }

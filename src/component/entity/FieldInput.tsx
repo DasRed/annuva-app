@@ -63,7 +63,7 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
                 </select>
             );
         case 'file':
-            return <FileField id={id} value={value} onChange={onChange} accept={field.name === 'logoFileId' ? 'image/*' : undefined}/>;
+            return <FileField id={id} value={value} onChange={onChange} accept={field.accept}/>;
         case 'integer':
         case 'year':
             return <input type="number" inputMode="numeric" step={1} min={field.min} max={field.type === 'integer' ? field.max : undefined} {...common}/>;

@@ -97,6 +97,8 @@ const entity: Record<keyof typeof entityEn, string> = {
     'field.invoiceTemplates.name':         'Name',
     'field.invoiceTemplates.paymentTermDays': 'Zahlungsziel (Tage)',
     'field.invoiceTemplates.senderLine':   'Absenderzeile',
+    'field.invoiceTemplates.signatureFileId': 'Unterschrift',
+    'field.invoiceTemplates.signatureName': 'Name unter der Unterschrift',
     'field.invoices.cancelsInvoiceId':     'Storniert',
     'field.invoices.customerId':           'Kunde',
     'field.invoices.date':                 'Rechnungsdatum',

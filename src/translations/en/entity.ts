@@ -98,6 +98,8 @@ const entity = {
     'field.invoiceTemplates.name':         'Name',
     'field.invoiceTemplates.paymentTermDays': 'Payment term (days)',
     'field.invoiceTemplates.senderLine':   'Sender line',
+    'field.invoiceTemplates.signatureFileId': 'Signature',
+    'field.invoiceTemplates.signatureName': 'Name below the signature',
     'field.invoices.cancelsInvoiceId':     'Cancels',
     'field.invoices.customerId':           'Customer',
     'field.invoices.date':                 'Invoice date',

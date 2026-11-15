@@ -28,6 +28,9 @@ export default interface InvoiceSnapshot {
         introText: string | null;
         logo: string | null;
         senderLine: string | null;
+        /** Scanned signature as data URL; missing in snapshots issued before signatures existed. */
+        signature?: string | null;
+        signatureName?: string | null;
     };
     tenant: {
         address: string | null;

@@ -15,4 +15,5 @@ export default interface PublicUser {
     tenantId: string | null;
     theme: 'dark' | 'light' | 'system';
     timezone: string;
+    twoFactorEnabled: boolean;
 }

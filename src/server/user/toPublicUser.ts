@@ -14,18 +14,19 @@ export default function toPublicUser(user: UserTable): PublicUser {
         avatarUrl = `https://www.gravatar.com/avatar/${sha256(user.email.trim().toLowerCase())}?s=128&d=404`;
     }
     return {
-        active:       user.active === 1,
-        avatarFileId: user.avatarFileId,
+        active:           user.active === 1,
+        avatarFileId:     user.avatarFileId,
         avatarUrl,
-        createdAt:    user.createdAt,
-        email:        user.email,
-        id:           user.id,
-        lastLoginAt:  user.lastLoginAt,
-        locale:       user.locale as Locale,
-        name:         user.name,
-        role:         user.role as Role,
-        tenantId:     user.tenantId,
-        theme:        user.theme as PublicUser['theme'],
-        timezone:     user.timezone,
+        createdAt:        user.createdAt,
+        email:            user.email,
+        id:               user.id,
+        lastLoginAt:      user.lastLoginAt,
+        locale:           user.locale as Locale,
+        name:             user.name,
+        role:             user.role as Role,
+        tenantId:         user.tenantId,
+        theme:            user.theme as PublicUser['theme'],
+        timezone:         user.timezone,
+        twoFactorEnabled: user.totpEnabledAt !== null,
     };
 }
