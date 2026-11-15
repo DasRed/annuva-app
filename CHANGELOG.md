@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/dasred/annuva-app/compare/v1.0.1...v1.1.0) (2026-11-15)
+
+
+### Features
+
+* stronger password policy ([32649a3](https://github.com/dasred/annuva-app/commit/32649a3ebdd774123038fab64f2d9958f27ab97e))
+
 ## [1.0.1](https://github.com/dasred/annuva-app/compare/v1.0.0...v1.0.1) (2026-11-15)
 
 
