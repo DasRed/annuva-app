@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/dasred/annuva-app/compare/v1.3.0...v1.3.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* do not repeat the service label in recurring invoice lines ([7a3f184](https://github.com/dasred/annuva-app/commit/7a3f1844854444662ac3de1bacc9af50cd705ed8))
+
 # [1.3.0](https://github.com/dasred/annuva-app/compare/v1.2.1...v1.3.0) (2026-11-15)
 
 
