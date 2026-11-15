@@ -1,0 +1,62 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": [
+        "typescript",
+        "react",
+        "react-perf",
+        "import",
+        "unicorn",
+        "nextjs",
+        "jsx-a11y",
+        "vitest"
+    ],
+    "categories": {
+        "correctness": "error",
+        "suspicious": "warn"
+    },
+    "rules": {
+        "curly": "error",
+        "eqeqeq": "error",
+        "no-var": "error",
+        "prefer-const": "error",
+        "import/no-named-export": "error",
+        "import/no-default-export": "off",
+        "import/no-cycle": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-key": "error",
+        "react-perf/jsx-no-new-function-as-prop": "off",
+        "react-perf/jsx-no-new-object-as-prop": "off",
+        "react-perf/jsx-no-new-array-as-prop": "off",
+        "react-perf/jsx-no-jsx-as-prop": "off",
+        "nextjs/no-img-element": "off",
+        "typescript/no-explicit-any": "off",
+        "unicorn/no-array-reduce": "off",
+        "unicorn/no-null": "off",
+        "jsx-a11y/no-autofocus": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "jsx-a11y/prefer-tag-over-role": "off",
+        "import/no-unassigned-import": ["warn", {"allow": ["**/*.css", "@fontsource-variable/**"]}]
+    },
+    "overrides": [
+        {
+            "files": [
+                "src/app/**/route.ts",
+                "src/app/**/page.tsx",
+                "src/app/**/layout.tsx",
+                "src/instrumentation.ts"
+            ],
+            "rules": {
+                "import/no-named-export": "off"
+            }
+        }
+    ],
+    "ignorePatterns": [
+        ".next",
+        "node_modules",
+        "data",
+        "coverage",
+        "next-env.d.ts"
+    ]
+}

@@ -1,0 +1,240 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/*
+ * Design tokens. Warm, light surfaces after the Moosburg style guide, with a petrol accent instead
+ * of red and terracotta for expenses. Dark mode swaps the surface and text tokens.
+ */
+:root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface-2: #f1ece1;
+    --surface-3: #f6ecd5;
+    --text: #1c1c1c;
+    --text-soft: #4d4a44;
+    --text-muted: #6f6b63;
+    --line: #e4e0d7;
+    --accent: #0e7c6b;
+    --accent-strong: #0a6457;
+    --accent-soft: #d9efe9;
+    --accent-ink: #ffffff;
+    --gold: #b8964e;
+    --gold-soft: #e8d5a3;
+    --gold-ink: #6e5a30;
+    --income: #007f68;
+    --income-soft: #8fcbbf;
+    --expense: #d6733a;
+    --expense-soft: #efc0a3;
+    --positive: #1f7a3f;
+    --positive-soft: #dcefe2;
+    --negative: #b42318;
+    --negative-soft: #fbe2df;
+    --warning: #9a6300;
+    --warning-soft: #fbefd2;
+    --info: #1d6fa5;
+    --info-soft: #dcebf6;
+    --shadow: 0 1px 2px rgb(28 28 28 / 0.05), 0 8px 24px -12px rgb(28 28 28 / 0.12);
+    color-scheme: light;
+}
+
+[data-theme=dark] {
+    --bg: #141310;
+    --surface: #1d1c18;
+    --surface-2: #26241f;
+    --surface-3: #332d20;
+    --text: #f3efe7;
+    --text-soft: #cfc9bd;
+    --text-muted: #a39d91;
+    --line: #36332c;
+    --accent: #3fb8a3;
+    --accent-strong: #5fd0bb;
+    --accent-soft: #163b35;
+    --accent-ink: #0d1f1c;
+    --gold: #d1b06a;
+    --gold-soft: #4a3e24;
+    --gold-ink: #e8d5a3;
+    --income: #24a08b;
+    --income-soft: #1f5a50;
+    --expense: #d2724a;
+    --expense-soft: #6b3a26;
+    --positive: #5cc483;
+    --positive-soft: #183a26;
+    --negative: #f0806f;
+    --negative-soft: #4a1f1a;
+    --warning: #e6b45a;
+    --warning-soft: #44361a;
+    --info: #6fb3e3;
+    --info-soft: #18324a;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+    color-scheme: dark;
+}
+
+@theme inline {
+    --color-bg: var(--bg);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-surface-3: var(--surface-3);
+    --color-text: var(--text);
+    --color-text-soft: var(--text-soft);
+    --color-text-muted: var(--text-muted);
+    --color-line: var(--line);
+    --color-accent: var(--accent);
+    --color-accent-strong: var(--accent-strong);
+    --color-accent-soft: var(--accent-soft);
+    --color-accent-ink: var(--accent-ink);
+    --color-gold: var(--gold);
+    --color-gold-soft: var(--gold-soft);
+    --color-gold-ink: var(--gold-ink);
+    --color-income: var(--income);
+    --color-income-soft: var(--income-soft);
+    --color-expense: var(--expense);
+    --color-expense-soft: var(--expense-soft);
+    --color-positive: var(--positive);
+    --color-positive-soft: var(--positive-soft);
+    --color-negative: var(--negative);
+    --color-negative-soft: var(--negative-soft);
+    --color-warning: var(--warning);
+    --color-warning-soft: var(--warning-soft);
+    --color-info: var(--info);
+    --color-info-soft: var(--info-soft);
+    --font-sans: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif;
+    --shadow-card: var(--shadow);
+    --breakpoint-3xl: 112rem;
+    --breakpoint-4xl: 140rem;
+    --animate-rise: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    --animate-fade: fade 0.3s ease-out both;
+    --animate-pop: pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+    --animate-slide-in: slide-in 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    --animate-shimmer: shimmer 1.4s linear infinite;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pop {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: none;
+    }
+}
+
+@keyframes shimmer {
+    from {
+        background-position: -400px 0;
+    }
+    to {
+        background-position: 400px 0;
+    }
+}
+
+@keyframes grow {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes grow-x {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-bg font-sans text-text antialiased;
+        font-feature-settings: 'ss01';
+    }
+
+    h1, h2, h3 {
+        @apply font-serif tracking-tight text-text;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-accent;
+    }
+
+    ::selection {
+        @apply bg-accent-soft text-text;
+    }
+
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+@layer components {
+    .chart-bar {
+        transform-box: fill-box;
+        transform-origin: bottom;
+        animation: grow 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .chart-bar-down {
+        transform-box: fill-box;
+        transform-origin: top;
+        animation: grow 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .chart-bar-x {
+        transform-box: fill-box;
+        transform-origin: left;
+        animation: grow-x 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .skeleton {
+        background: linear-gradient(90deg, var(--surface-2) 0, var(--surface-3) 120px, var(--surface-2) 240px);
+        background-size: 800px 100%;
+        @apply animate-shimmer rounded-md;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
