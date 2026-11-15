@@ -17,9 +17,9 @@ COPY ./public /var/www/public
 # package.json is copied last: Semantic Release bumps the version after the build.
 COPY ./package.json /var/www/package.json
 
-RUN mkdir -p /var/www/data && chown -R node:node /var/www/data
-
-USER node
+RUN mkdir -p /var/www/data
+# && chown -R node:node /var/www/data
+# USER node
 
 VOLUME /var/www/data
 
