@@ -1,3 +1,15 @@
+# [1.4.0](https://github.com/DasRed/annuva-app/compare/v1.3.1...v1.4.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* use the canonical repository URL for releases ([9f4c02b](https://github.com/DasRed/annuva-app/commit/9f4c02b52eb33eb3d256e5b7138d01016cd8cdc1))
+
+
+### Features
+
+* month dropdown for the month settings ([be6da21](https://github.com/DasRed/annuva-app/commit/be6da2104b27327c1c301df239a49cdb7005aeda))
+
 ## [1.3.1](https://github.com/dasred/annuva-app/compare/v1.3.0...v1.3.1) (2026-11-15)
 
 
