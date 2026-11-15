@@ -27,6 +27,7 @@ function recordSchema(fields: readonly FieldDefinition[]): Json {
         file:     {format: 'uuid', type: 'string'},
         integer:  {type: 'integer'},
         money:    {description: 'Decimal amount in the tenant currency', type: 'number'},
+        month:    {description: 'Month of the year (1 = January)', maximum: 12, minimum: 1, type: 'integer'},
         percent:  {type: 'number'},
         relation: {format: 'uuid', type: 'string'},
         string:   {type: 'string'},

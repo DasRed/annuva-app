@@ -190,8 +190,8 @@ const entity = {
     'field.taxYears.year':                 'Year',
 
     'hint.settings.invoiceNumberFormat':   'Placeholders: {YYYY}, {YY}, {MM} and a counter {NNN} (number of N = digits).',
-    'hint.settings.recurringInvoiceMonth': 'Default month for the next invoice of new recurring charges (1–12).',
-    'hint.settings.taxPaymentMonth':       'Month of the following year in which the tax is paid or refunded (1–12).',
+    'hint.settings.recurringInvoiceMonth': 'Default month for the next invoice of new recurring charges.',
+    'hint.settings.taxPaymentMonth':       'Month of the following year in which the tax is paid or refunded.',
 
     'enum.customers.channel.direct':       'Direct',
     'enum.customers.channel.internal':     'Internal',

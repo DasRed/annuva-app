@@ -9,6 +9,7 @@ export default function fromFormValue(field: FieldDefinition, value: string): un
             return value === 'true';
         case 'integer':
         case 'money':
+        case 'month':
         case 'percent':
         case 'year':
             return value.trim() === '' ? null : Number(value.replace(',', '.'));

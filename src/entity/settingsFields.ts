@@ -23,8 +23,8 @@ const settingsFields: readonly FieldDefinition[] = [
     {default: 80, name: 'defaultHourlyRate', required: true, type: 'money'},
     {default: 60, name: 'defaultHostingPerYear', required: true, type: 'money'},
     {default: 'RE-{YYYY}-{NNN}', max: 64, name: 'invoiceNumberFormat', required: true, type: 'string'},
-    {default: 1, max: 12, min: 1, name: 'recurringInvoiceMonth', required: true, type: 'integer'},
-    {default: 4, max: 12, min: 1, name: 'taxPaymentMonth', required: true, type: 'integer'},
+    {default: 1, name: 'recurringInvoiceMonth', required: true, type: 'month'},
+    {default: 4, name: 'taxPaymentMonth', required: true, type: 'month'},
     {default: 'equal_among_hosting_customers', name: 'serverCostAllocation', options: ['equal_among_hosting_customers', 'none'], required: true, type: 'enum'},
     {default: 'at_cost', name: 'domainPassThrough', options: ['at_cost', 'markup'], required: true, type: 'enum'},
 ];

@@ -15,6 +15,7 @@ export default function fromDbValue(field: FieldDefinition, value: unknown): unk
         case 'percent':
             return Number(value) / 100;
         case 'integer':
+        case 'month':
         case 'year':
             return Number(value);
         default:

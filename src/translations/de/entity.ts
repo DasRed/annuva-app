@@ -189,8 +189,8 @@ const entity: Record<keyof typeof entityEn, string> = {
     'field.taxYears.year':                 'Jahr',
 
     'hint.settings.invoiceNumberFormat':   'Platzhalter: {YYYY}, {YY}, {MM} und ein Zähler {NNN} (Anzahl N = Stellen).',
-    'hint.settings.recurringInvoiceMonth': 'Standardmonat für die nächste Rechnung neuer wiederkehrender Posten (1–12).',
-    'hint.settings.taxPaymentMonth':       'Monat im Folgejahr, in dem die Steuer gezahlt oder erstattet wird (1–12).',
+    'hint.settings.recurringInvoiceMonth': 'Standardmonat für die nächste Rechnung neuer wiederkehrender Posten.',
+    'hint.settings.taxPaymentMonth':       'Monat im Folgejahr, in dem die Steuer gezahlt oder erstattet wird.',
 
     'enum.customers.channel.direct':       'Direkt',
     'enum.customers.channel.internal':     'Intern',

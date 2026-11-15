@@ -30,6 +30,8 @@ function fieldSchema(field: FieldDefinition): z.ZodType {
             }
             return schema;
         }
+        case 'month':
+            return z.number().int().min(1).max(12);
         case 'money':
             return z.number().multipleOf(0.01).min(-100_000_000).max(100_000_000);
         case 'percent':

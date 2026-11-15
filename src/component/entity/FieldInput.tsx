@@ -19,7 +19,7 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
     onChange: (value: string) => void;
     value: string;
 }) {
-    const {currency, td} = useI18n();
+    const {currency, month, td} = useI18n();
     const placeholder = td(`placeholder.${entity}.${field.name}`, '') || undefined;
     const common = {'aria-invalid': invalid, className: inputClass, id, onChange: (event: { target: { value: string } }) => onChange(event.target.value), placeholder, value};
 
@@ -67,6 +67,13 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
         case 'integer':
         case 'year':
             return <input type="number" inputMode="numeric" step={1} min={field.min} max={field.type === 'integer' ? field.max : undefined} {...common}/>;
+        case 'month':
+            return (
+                <select {...common}>
+                    {field.required !== true ? <option value="">—</option> : null}
+                    {Array.from({length: 12}, (_, index) => index + 1).map((number) => <option key={number} value={String(number)}>{month(number)}</option>)}
+                </select>
+            );
         case 'money':
             return (
                 <div className="relative">

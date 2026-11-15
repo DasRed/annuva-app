@@ -8,6 +8,7 @@ type FieldType =
     | 'file'
     | 'integer'
     | 'money'
+    | 'month'
     | 'percent'
     | 'relation'
     | 'string'

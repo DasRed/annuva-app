@@ -11,7 +11,7 @@ import useI18n from '@/i18n/useI18n';
  * Read-only display of a field value, formatted for the user's locale.
  */
 export default function FieldValue({entity, field, value}: { entity: EntityName; field: FieldDefinition; value: unknown }) {
-    const {date, money, number, td} = useI18n();
+    const {date, money, month, number, td} = useI18n();
     const lookup = useLookup(field.type === 'relation' ? field.relation : undefined);
 
     if (value === null || value === undefined || value === '') {
@@ -39,6 +39,8 @@ export default function FieldValue({entity, field, value}: { entity: EntityName;
                     <IconPaperclip size={16} stroke={1.75}/>{td('common.openFile')}
                 </a>
             );
+        case 'month':
+            return <>{month(Number(value))}</>;
         case 'money':
             return <span className="tabular">{money(Math.round(Number(value) * 100))}</span>;
         case 'percent':
