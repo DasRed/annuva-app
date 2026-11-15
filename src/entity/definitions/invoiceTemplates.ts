@@ -13,7 +13,7 @@ const invoiceTemplates: EntityDefinition = {
         {name: 'footerLeft', type: 'text'},
         {name: 'footerCenter', type: 'text'},
         {name: 'footerRight', type: 'text'},
-        {default: '#0f6b5c', max: 7, name: 'accentColor', type: 'string'},
+        {default: '#0f6b5c', name: 'accentColor', type: 'color'},
         {default: 14, name: 'paymentTermDays', required: true, type: 'integer'},
     ],
     name:        'invoiceTemplates',

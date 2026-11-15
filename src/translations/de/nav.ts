@@ -1,7 +1,6 @@
 import type navEn from '@/translations/en/nav';
 
 const nav: Record<keyof typeof navEn, string> = {
-    'nav.apiDocs':          'API & MCP',
     'nav.close':            'Menü schließen',
     'nav.customers':        'Kunden',
     'nav.dashboard':        'Dashboard',
@@ -21,7 +20,6 @@ const nav: Record<keyof typeof navEn, string> = {
     'nav.recurringCosts':   'Fixkosten',
     'nav.resources':        'Ressourcen',
     'nav.settings':         'Einstellungen',
-    'nav.source':           'Quellcode (AGPL)',
     'nav.tasks':            'Aufgaben',
     'nav.tax':              'Steuer',
     'nav.templates':        'Rechnungsvorlagen',

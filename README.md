@@ -73,7 +73,7 @@ aside?*
   special characters are allowed but not required
 - Profile picture upload with Gravatar fallback; language, time zone and theme per user
 - Personal API tokens (read or read/write) for the REST API and the MCP server
-- OpenAPI 3.1 description and interactive API documentation inside the app
+- OpenAPI 3.1 description of the complete API
 
 ---
 
@@ -235,8 +235,7 @@ Entities: `customers`, `partners`, `resources`, `offers`, `recurring-charges`, `
 Money values in entity endpoints are decimals (`60.5`); the dashboard returns integer cents. Errors
 are JSON with `error`, `message` and, for validation errors, `fields`.
 
-The complete, always up-to-date reference is the OpenAPI document at `/api/v1/openapi`, rendered in
-the app under *API documentation*.
+The complete, always up-to-date reference is the OpenAPI document at `/api/v1/openapi`.
 
 ---
 
@@ -343,5 +342,4 @@ deployment. The version is shown in the user menu.
 ## License
 
 Annuva is free software under the [GNU Affero General Public License v3.0](LICENSE). If you run a
-modified version as a network service, you have to offer its source code to its users – the user
-menu links to the source.
+modified version as a network service, you have to offer its source code to its users.

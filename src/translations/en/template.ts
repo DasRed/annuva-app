@@ -1,0 +1,37 @@
+const template = {
+    'templates.back':                         'All templates',
+    'templates.default':                      'Default',
+    'templates.editorDescription':            'Everything you change here is printed on new invoices with this template. The preview shows a sample invoice with your company data.',
+    'templates.newName':                      'New template',
+    'templates.openPreview':                  'Preview',
+    'templates.paymentTerm':                  'Payment term {days} days',
+    'templates.preview':                      'Sample invoice',
+    'templates.previewEmpty':                 'Create a template to see the preview.',
+    'templates.previewError':                 'The preview could not be created.',
+    'templates.previewHint':                  'Sample data with your company details. Issued invoices keep the look they were issued with.',
+    'templates.rendering':                    'Updating …',
+
+    'hint.invoiceTemplates.accentColor':      'Colour of the title, the totals line and the company name without logo.',
+    'hint.invoiceTemplates.closingText':      'Below the totals and the payment note – e.g. a thank-you or greeting.',
+    'hint.invoiceTemplates.footerCenter':     'Empty: e-mail, phone, website and tax number from the settings.',
+    'hint.invoiceTemplates.footerLeft':       'Empty: company name and address from the settings.',
+    'hint.invoiceTemplates.footerRight':      'Empty: bank details from the settings.',
+    'hint.invoiceTemplates.introText':        'Above the line items – e.g. a short salutation.',
+    'hint.invoiceTemplates.isDefault':        'Used for every invoice without its own template.',
+    'hint.invoiceTemplates.logoFileId':       'Top right instead of the company name. PNG or JPG, ideally with a transparent background.',
+    'hint.invoiceTemplates.name':             'Only for you – it is not printed.',
+    'hint.invoiceTemplates.paymentTermDays':  'Due date = invoice date + these days.',
+    'hint.invoiceTemplates.senderLine':       'Small line above the address (visible in window envelopes). Empty: company name and address.',
+
+    'placeholder.invoiceTemplates.accentColor':  '#0f6b5c',
+    'placeholder.invoiceTemplates.closingText':  'Thank you for your trust. If you have any questions about this invoice, just reply to this e-mail.\nKind regards',
+    'placeholder.invoiceTemplates.footerCenter': 'hello@example-it.com\n+44 20 1234 5678\nVAT GB123456789',
+    'placeholder.invoiceTemplates.footerLeft':   'Example IT\nJohn Smith\n1 Example Street, London',
+    'placeholder.invoiceTemplates.footerRight':  'Example Bank\nIBAN GB00 EXMP 1234 5678 9012 34\nBIC EXMPGB2L',
+    'placeholder.invoiceTemplates.introText':    'Thank you for your order. I am invoicing the following services:',
+    'placeholder.invoiceTemplates.name':         'e.g. Standard, Agency customers, English',
+    'placeholder.invoiceTemplates.paymentTermDays': '14',
+    'placeholder.invoiceTemplates.senderLine':   'Example IT · 1 Example Street · London',
+};
+
+export default template;

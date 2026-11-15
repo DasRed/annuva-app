@@ -22,6 +22,7 @@ function recordSchema(fields: readonly FieldDefinition[]): Json {
         boolean:  {type: 'boolean'},
         date:     {format: 'date', type: 'string'},
         datetime: {format: 'date-time', type: 'string'},
+        color:    {pattern: '^#[0-9a-fA-F]{6}$', type: 'string'},
         email:    {format: 'email', type: 'string'},
         file:     {format: 'uuid', type: 'string'},
         integer:  {type: 'integer'},
@@ -159,6 +160,14 @@ export default function buildOpenApi(baseUrl: string): Json {
     paths['/api/v1/settings'] = {
         get:   {responses: {...ok(ref('Settings')), ...errors}, summary: 'Business settings', tags: ['settings']},
         patch: {requestBody: json(jsonSchema(buildSchema(settingsFields, 'update'))), responses: {...ok(ref('Settings')), ...errors}, summary: 'Update settings (admin)', tags: ['settings']},
+    };
+    paths['/api/v1/invoice-templates/preview'] = {
+        post: {
+            requestBody: json(jsonSchema(buildSchema(entities.invoiceTemplates.fields, 'update'))),
+            responses:   {200: {content: {'application/pdf': {}}, description: 'Sample invoice as PDF'}, ...errors},
+            summary:     'Preview an invoice template – also unsaved values – as a sample invoice (admin)',
+            tags:        ['invoice-templates'],
+        },
     };
     paths['/api/v1/files'] = {
         post: {

@@ -11,7 +11,7 @@ import nowIso from '@/server/util/nowIso';
 import randomToken from '@/server/util/randomToken';
 
 const createSchema = z.object({
-    expiresAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+    expiresAt: z.iso.date().refine((value) => value >= new Date().toISOString().slice(0, 10), {message: 'The expiry date must not be in the past'}).nullable().optional(),
     name:      z.string().trim().min(1).max(255),
     scope:     z.enum(['read', 'read_write']).default('read'),
 }).strict();

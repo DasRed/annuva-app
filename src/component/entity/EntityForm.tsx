@@ -1,9 +1,11 @@
 'use client';
 
-import {type FormEvent, useState} from 'react';
+import {type FormEvent, useEffect, useMemo, useRef, useState} from 'react';
 import ApiClientError from '@/client/ApiClientError';
+import useAutoSave from '@/client/useAutoSave';
 import FieldInput from '@/component/entity/FieldInput';
 import FormField from '@/component/ui/FormField';
+import SaveIndicator from '@/component/ui/SaveIndicator';
 import Notice from '@/component/ui/Notice';
 import type EntityName from '@/entity/EntityName';
 import type FieldDefinition from '@/entity/FieldDefinition';
@@ -16,8 +18,15 @@ import useI18n from '@/i18n/useI18n';
  * Generic form generated from field definitions. Hidden fields keep their value (e.g. the customer
  * when the form is opened on a customer page). Submit happens through the form id, so the button
  * can live in a dialog footer.
+ *
+ * With `autoSave` there is no submit: choices are saved on change, typed values when the field
+ * loses focus, each with its own status next to the label.
  */
-export default function EntityForm({columns = 2, defaults = {}, entity, fields, formId, hidden = [], initial, onSubmit, sections}: {
+const SAVE_ON_CHANGE: readonly string[] = ['boolean', 'date', 'enum', 'file', 'relation'];
+
+export default function EntityForm({autoSave, columns = 2, defaults = {}, entity, fields, formId, hidden = [], initial, onSubmit, onValuesChange, sections}: {
+    /** Save every field on its own instead of submitting the whole form. */
+    autoSave?: (changes: Record<string, unknown>) => Promise<void>;
     columns?: 2 | 3;
     defaults?: Record<string, unknown>;
     entity: EntityName | 'settings';
@@ -25,24 +34,46 @@ export default function EntityForm({columns = 2, defaults = {}, entity, fields, 
     formId: string;
     hidden?: readonly string[];
     initial?: Record<string, unknown> | null;
-    onSubmit: (data: Record<string, unknown>) => Promise<void>;
+    onSubmit?: (data: Record<string, unknown>) => Promise<void>;
+    /** Current – possibly unsaved – values after every change, e.g. for a live preview. Pass a stable callback. */
+    onValuesChange?: (values: Record<string, unknown>) => void;
     /** Optional grouping of the fields into titled sections (rendered as cards in a grid). */
     sections?: { fields: readonly string[]; title: string }[];
 }) {
     const {t, td} = useI18n();
-    const editable = fields.filter((field) => field.readOnly !== true);
+    const editable = useMemo(() => fields.filter((field) => field.readOnly !== true), [fields]);
     const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(editable.map((field) => {
         const source = initial?.[field.name] !== undefined ? initial[field.name] : (defaults[field.name] !== undefined ? defaults[field.name] : field.default);
         return [field.name, toFormValue(field, source)];
     })));
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
+    const {saveField, states} = useAutoSave(autoSave ?? (async () => undefined), t('common.error'));
+    const saved = useRef<Record<string, string>>({...values});
+
+    useEffect(() => {
+        onValuesChange?.(Object.fromEntries(editable.map((field) => [field.name, fromFormValue(field, values[field.name] ?? '')])));
+    }, [editable, onValuesChange, values]);
+
+    const commit = async (field: FieldDefinition, value: string) => {
+        if (autoSave === undefined || saved.current[field.name] === value) {
+            return;
+        }
+        saved.current[field.name] = value;
+        if (!(await saveField(field.name, fromFormValue(field, value)))) {
+            delete saved.current[field.name];
+        }
+    };
 
     const visible = (field: FieldDefinition) => !hidden.includes(field.name)
                                                  && (field.visibleWhen === undefined || field.visibleWhen.values.includes(values[field.visibleWhen.field]));
 
     const submit = async (event: FormEvent) => {
         event.preventDefault();
+        if (autoSave !== undefined || onSubmit === undefined) {
+            (document.activeElement as HTMLElement | null)?.blur();
+            return;
+        }
         setErrors({});
         setError(null);
         const data: Record<string, unknown> = {};
@@ -81,18 +112,33 @@ export default function EntityForm({columns = 2, defaults = {}, entity, fields, 
                         htmlFor={id}
                         label={td(`field.${entity}.${field.name}`, humanize(field.name))}
                         required={field.required === true && field.type !== 'boolean'}
-                        error={errors[field.name]}
+                        error={states[field.name]?.status === 'error' ? states[field.name].message : errors[field.name]}
+                        status={autoSave === undefined ? undefined : <SaveIndicator state={states[field.name]}/>}
                         hint={td(`hint.${entity}.${field.name}`, '') || undefined}
                         className={field.type === 'text' ? 'sm:col-span-full' : ''}
                     >
-                        <FieldInput
-                            entity={entity}
-                            field={field}
-                            id={id}
-                            invalid={errors[field.name] !== undefined}
-                            value={values[field.name] ?? ''}
-                            onChange={(value) => setValues((current) => ({...current, [field.name]: value}))}
-                        />
+                        <div
+                            className="contents"
+                            onBlur={(event) => {
+                                if (!SAVE_ON_CHANGE.includes(field.type) && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                                    void commit(field, values[field.name] ?? '');
+                                }
+                            }}
+                        >
+                            <FieldInput
+                                entity={entity}
+                                field={field}
+                                id={id}
+                                invalid={errors[field.name] !== undefined || states[field.name]?.status === 'error'}
+                                value={values[field.name] ?? ''}
+                                onChange={(value) => {
+                                    setValues((current) => ({...current, [field.name]: value}));
+                                    if (SAVE_ON_CHANGE.includes(field.type)) {
+                                        void commit(field, value);
+                                    }
+                                }}
+                            />
+                        </div>
                     </FormField>
                 );
             })}

@@ -6,6 +6,7 @@ import dashboard from '@/translations/de/dashboard';
 import entity from '@/translations/de/entity';
 import nav from '@/translations/de/nav';
 import pdf from '@/translations/de/pdf';
+import template from '@/translations/de/template';
 import type en from '@/translations/en/index';
 
 const de: Record<keyof typeof en, string> = {
@@ -17,6 +18,7 @@ const de: Record<keyof typeof en, string> = {
     ...entity,
     ...nav,
     ...pdf,
+    ...template,
 };
 
 export default de;

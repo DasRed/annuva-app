@@ -2,9 +2,11 @@ import type {Kysely} from 'kysely';
 import type AuthContext from '@/server/auth/AuthContext';
 import getDb from '@/server/db/getDb';
 import type InvoiceLineTable from '@/server/db/table/InvoiceLineTable';
-import readStoredFile from '@/server/file/readStoredFile';
 import calculateTotals from '@/server/invoice/calculateTotals';
 import type InvoiceSnapshot from '@/server/invoice/InvoiceSnapshot';
+import loadTemplateLogo from '@/server/invoice/loadTemplateLogo';
+import snapshotLocale from '@/server/invoice/snapshotLocale';
+import snapshotTenant from '@/server/invoice/snapshotTenant';
 import TenantService from '@/server/tenant/TenantService';
 
 type Row = Record<string, any>;
@@ -25,16 +27,8 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
                       ? await templateQuery.where('id', '=', invoice.templateId).executeTakeFirst()
                       : await templateQuery.orderBy('isDefault', 'desc').orderBy('createdAt').executeTakeFirst()) as Row | undefined;
 
-    let logo: string | null = null;
-    if (template?.logoFileId) {
-        try {
-            const {content, file} = await readStoredFile(context, template.logoFileId);
-            logo = `data:${file.mimeType};base64,${content.toString('base64')}`;
-        }
-        catch {
-            logo = null;
-        }
-    }
+    const logo = await loadTemplateLogo(context, template?.logoFileId);
+    const language = invoice.language === 'en' ? 'en' : 'de';
 
     const cancelled = invoice.cancelsInvoiceId === null
                       ? null
@@ -49,7 +43,7 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
         description:     invoice.description,
         dueDate:         invoice.dueDate,
         gross:           totals.gross,
-        language:        invoice.language === 'en' ? 'en' : 'de',
+        language,
         lines:           lines.map((line, index) => ({
             description: line.description,
             net:         totals.lines[index].net,
@@ -57,7 +51,7 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
             taxRate:     line.taxRate,
             unitPrice:   line.unitPrice,
         })),
-        locale:          invoice.language === 'en' ? (tenant.locale.startsWith('en') ? tenant.locale : 'en-GB') : (tenant.locale.startsWith('de') ? tenant.locale : 'de-DE'),
+        locale:          snapshotLocale(language, tenant.locale),
         net:             totals.net,
         notes:           invoice.notes,
         number:          invoice.number,
@@ -79,18 +73,7 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
             logo,
             senderLine:   template?.senderLine ?? null,
         },
-        tenant:          {
-            address:     tenant.address,
-            bankName:    tenant.bankName,
-            bic:         tenant.bic,
-            companyName: tenant.companyName ?? tenant.name,
-            email:       tenant.email,
-            iban:        tenant.iban,
-            phone:       tenant.phone,
-            taxNumber:   tenant.taxNumber,
-            vatId:       tenant.vatId,
-            website:     tenant.website,
-        },
+        tenant:          snapshotTenant(tenant),
         vatMode:         tenant.vatMode,
     };
 }

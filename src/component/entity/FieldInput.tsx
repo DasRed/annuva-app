@@ -20,7 +20,8 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
     value: string;
 }) {
     const {currency, td} = useI18n();
-    const common = {'aria-invalid': invalid, className: inputClass, id, onChange: (event: { target: { value: string } }) => onChange(event.target.value), value};
+    const placeholder = td(`placeholder.${entity}.${field.name}`, '') || undefined;
+    const common = {'aria-invalid': invalid, className: inputClass, id, onChange: (event: { target: { value: string } }) => onChange(event.target.value), placeholder, value};
 
     switch (field.type) {
         case 'boolean':
@@ -36,6 +37,19 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
                     <span className="relative h-6 w-11 rounded-full bg-line transition peer-checked:bg-accent peer-focus-visible:ring-2 peer-focus-visible:ring-accent/40 after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"/>
                     <span className="text-sm text-text-soft">{value === 'true' ? td('common.yes') : td('common.no')}</span>
                 </label>
+            );
+        case 'color':
+            return (
+                <div className="flex items-center gap-2">
+                    <input
+                        type="color"
+                        aria-label={td(`field.${entity}.${field.name}`, field.name)}
+                        className="h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-line bg-surface p-1"
+                        value={/^#[\da-f]{6}$/i.test(value) ? value : '#000000'}
+                        onChange={(event) => onChange(event.target.value)}
+                    />
+                    <input type="text" maxLength={7} spellCheck={false} {...common} className={`${inputClass} font-mono`}/>
+                </div>
             );
         case 'date':
             return <input type="date" {...common}/>;

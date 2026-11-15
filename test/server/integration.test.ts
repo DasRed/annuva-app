@@ -109,6 +109,17 @@ describe('services with SQLite', () => {
         expect(Object.getPrototypeOf(row)).toBe(Object.prototype);
     });
 
+    it('renders a template preview from unsaved values', async () => {
+        const {default: buildTemplatePreviewSnapshot} = await import('@/server/invoice/buildTemplatePreviewSnapshot');
+        const {default: renderInvoicePdf} = await import('@/server/pdf/renderInvoicePdf');
+        const snapshot = await buildTemplatePreviewSnapshot(context, {accentColor: '#12', introText: 'Hallo', paymentTermDays: 30});
+        expect(snapshot.template.accentColor).toBe('#0f6b5c');
+        expect(snapshot.template.introText).toBe('Hallo');
+        expect(snapshot.dueDate! > snapshot.date!).toBe(true);
+        expect(snapshot.recipient.name).toBe('Muster GmbH');
+        expect((await renderInvoicePdf(snapshot, false)).subarray(0, 4).toString()).toBe('%PDF');
+    });
+
     it('authenticates API tokens', async () => {
         const {default: TokenService} = await import('@/server/token/TokenService');
         const {default: getRequestContext} = await import('@/server/auth/getRequestContext');

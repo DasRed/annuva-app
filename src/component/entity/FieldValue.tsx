@@ -20,6 +20,13 @@ export default function FieldValue({entity, field, value}: { entity: EntityName;
     switch (field.type) {
         case 'boolean':
             return <>{value === true ? td('common.yes') : td('common.no')}</>;
+        case 'color':
+            return (
+                <span className="inline-flex items-center gap-2">
+                    <span className="size-4 rounded border border-line" style={{backgroundColor: String(value)}}/>
+                    <code className="text-xs">{String(value)}</code>
+                </span>
+            );
         case 'date':
             return <span className="tabular">{date(String(value))}</span>;
         case 'datetime':

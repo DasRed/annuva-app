@@ -1,5 +1,4 @@
 const nav = {
-    'nav.apiDocs':          'API & MCP',
     'nav.close':            'Close menu',
     'nav.customers':        'Customers',
     'nav.dashboard':        'Dashboard',
@@ -19,7 +18,6 @@ const nav = {
     'nav.recurringCosts':   'Fixed costs',
     'nav.resources':        'Resources',
     'nav.settings':         'Settings',
-    'nav.source':           'Source code (AGPL)',
     'nav.tasks':            'Tasks',
     'nav.tax':              'Tax',
     'nav.templates':        'Invoice templates',

@@ -1,6 +1,6 @@
 'use client';
 
-import {IconApi, IconBrandGithub, IconChevronUp, IconLogout, IconUserCircle} from '@tabler/icons-react';
+import {IconChevronUp, IconLogout, IconUserCircle} from '@tabler/icons-react';
 import Link from 'next/link';
 import {useEffect, useRef, useState} from 'react';
 import apiFetch from '@/client/apiFetch';
@@ -32,12 +32,6 @@ export default function UserMenu({avatarUrl, email, name, version}: { avatarUrl:
                     <Link href="/profile" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-2">
                         <IconUserCircle size={18} stroke={1.75}/>{t('nav.profile')}
                     </Link>
-                    <Link href="/api-docs" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-2">
-                        <IconApi size={18} stroke={1.75}/>{t('nav.apiDocs')}
-                    </Link>
-                    <a href="https://github.com/DasRed/annuva-app" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-2">
-                        <IconBrandGithub size={18} stroke={1.75}/>{t('nav.source')}
-                    </a>
                     <button
                         type="button"
                         className="flex w-full items-center gap-2 border-t border-line px-3 py-2.5 text-left text-sm text-negative hover:bg-negative-soft"

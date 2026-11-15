@@ -7,6 +7,8 @@ function fieldSchema(field: FieldDefinition): z.ZodType {
     switch (field.type) {
         case 'boolean':
             return z.boolean();
+        case 'color':
+            return z.string().regex(/^#[\da-f]{6}$/i, 'Expected a colour like #0f6b5c');
         case 'date':
             return z.string().regex(isoDate, 'Expected a date in the format YYYY-MM-DD');
         case 'datetime':

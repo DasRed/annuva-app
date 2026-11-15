@@ -6,6 +6,7 @@ import dashboard from '@/translations/en/dashboard';
 import entity from '@/translations/en/entity';
 import nav from '@/translations/en/nav';
 import pdf from '@/translations/en/pdf';
+import template from '@/translations/en/template';
 
 /**
  * English is the reference language: its keys define the TranslationKey type.
@@ -19,6 +20,7 @@ const en = {
     ...entity,
     ...nav,
     ...pdf,
+    ...template,
 };
 
 export default en;
