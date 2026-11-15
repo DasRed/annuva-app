@@ -1,6 +1,6 @@
 {
     "name": "@dasred/annuva-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Self-hostable billing and profitability dashboard for freelancers who sell hosting, domains and maintenance",
     "type": "module",
     "author": "Marco Starker",
