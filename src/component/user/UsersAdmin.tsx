@@ -16,6 +16,7 @@ import PageHeader from '@/component/ui/PageHeader';
 import Pill from '@/component/ui/Pill';
 import Skeleton from '@/component/ui/Skeleton';
 import useI18n from '@/i18n/useI18n';
+import isStrongPassword from '@/validation/isStrongPassword';
 
 type User = { active: boolean; avatarUrl: string | null; email: string; id: string; lastLoginAt: string | null; name: string; role: string };
 
@@ -57,9 +58,13 @@ export default function UsersAdmin({currentUserId, mailEnabled}: { currentUserId
     };
 
     const save = async () => {
-        setSaving(true);
         setErrors({});
         setError(null);
+        if ((editing === 'new' || form.password !== '') && !isStrongPassword(form.password)) {
+            setErrors({password: t('users.passwordHint')});
+            return;
+        }
+        setSaving(true);
         try {
             if (editing === 'new') {
                 await apiFetch('/api/v1/users', {body: {email: form.email, locale: form.locale, name: form.name, password: form.password, role: form.role}});

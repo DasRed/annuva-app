@@ -10,6 +10,7 @@ import EntityService from '@/server/entity/EntityService';
 import ApiError from '@/server/error/ApiError';
 import logger from '@/server/log/logger';
 import MailService from '@/server/mail/MailService';
+import passwordSchema from '@/server/security/passwordSchema';
 import getSetupToken from '@/server/setup/getSetupToken';
 import isSetupRequired from '@/server/setup/isSetupRequired';
 import TenantService from '@/server/tenant/TenantService';
@@ -23,7 +24,7 @@ const completeSchema = z.object({
         email:    z.email(),
         locale:   z.enum(['de', 'en']).optional(),
         name:     z.string().trim().min(1).max(255),
-        password: z.string().min(10).max(200),
+        password: passwordSchema,
         timezone: z.string().max(64).optional(),
     }),
     settings: z.record(z.string(), z.unknown()),

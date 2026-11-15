@@ -9,6 +9,7 @@ import FormField from '@/component/ui/FormField';
 import inputClass from '@/component/ui/inputClass';
 import Notice from '@/component/ui/Notice';
 import useI18n from '@/i18n/useI18n';
+import isStrongPassword from '@/validation/isStrongPassword';
 
 /**
  * Without token: request a reset link by e-mail. With token (from the link): set a new password.
@@ -23,8 +24,12 @@ export default function PasswordResetForm({token}: { token: string | null }) {
     return (
         <form className="flex flex-col gap-5" onSubmit={async (event) => {
             event.preventDefault();
-            setBusy(true);
             setError(null);
+            if (token !== null && !isStrongPassword(value)) {
+                setError(t('users.passwordHint'));
+                return;
+            }
+            setBusy(true);
             try {
                 await apiFetch('/api/auth/password-reset', {body: token === null ? {email: value} : {password: value, token}});
                 setDone(true);

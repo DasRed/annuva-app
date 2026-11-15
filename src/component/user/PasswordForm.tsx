@@ -9,6 +9,7 @@ import FormField from '@/component/ui/FormField';
 import inputClass from '@/component/ui/inputClass';
 import Notice from '@/component/ui/Notice';
 import useI18n from '@/i18n/useI18n';
+import isStrongPassword from '@/validation/isStrongPassword';
 
 export default function PasswordForm() {
     const {t} = useI18n();
@@ -22,9 +23,13 @@ export default function PasswordForm() {
         <Card title={t('profile.password')}>
             <form className="grid gap-4 sm:grid-cols-2" onSubmit={async (event) => {
                 event.preventDefault();
-                setSaving(true);
                 setErrors({});
                 setMessage(null);
+                if (!isStrongPassword(newPassword)) {
+                    setErrors({newPassword: t('users.passwordHint')});
+                    return;
+                }
+                setSaving(true);
                 try {
                     await apiFetch('/api/v1/profile/password', {body: {currentPassword, newPassword}});
                     setCurrentPassword('');

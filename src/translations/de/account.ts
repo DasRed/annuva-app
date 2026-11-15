@@ -58,7 +58,7 @@ const account: Record<keyof typeof accountEn, string> = {
     'users.newPasswordHint':      'Leer lassen, um das Passwort zu behalten.',
     'users.noMailHint':           'E-Mail ist nicht konfiguriert: Gib das Passwort selbst an den Benutzer weiter.',
     'users.password':             'Passwort',
-    'users.passwordHint':         'Mindestens 10 Zeichen.',
+    'users.passwordHint':         'Mindestens 9 Zeichen mit Groß- und Kleinbuchstaben und einer Zahl.',
     'users.role':                 'Rolle',
     'users.role.admin':           'Administrator',
     'users.role.user':            'Benutzer',

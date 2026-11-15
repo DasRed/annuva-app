@@ -20,6 +20,7 @@ import humanize from '@/entity/humanize';
 import settingsFields from '@/entity/settingsFields';
 import toFormValue from '@/entity/toFormValue';
 import useI18n from '@/i18n/useI18n';
+import isStrongPassword from '@/validation/isStrongPassword';
 
 const companyFields = ['companyName', 'address', 'email', 'phone', 'website', 'vatMode', 'defaultVatRate', 'taxNumber', 'vatId', 'currency', 'locale', 'invoiceNumberFormat', 'iban', 'bic', 'bankName'];
 const templateFields = ['senderLine', 'introText', 'closingText', 'accentColor', 'paymentTermDays', 'logoFileId'];
@@ -91,7 +92,7 @@ export default function SetupWizard({database}: { database: { driver: string; er
             if (!admin.email.includes('@')) {
                 found.email = t('validation.email');
             }
-            if (admin.password.length < 10) {
+            if (!isStrongPassword(admin.password)) {
                 found.password = t('users.passwordHint');
             }
             if (admin.password !== admin.password2) {

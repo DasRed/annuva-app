@@ -8,6 +8,7 @@ import ApiError from '@/server/error/ApiError';
 import MailService from '@/server/mail/MailService';
 import hashPassword from '@/server/security/hashPassword';
 import hashToken from '@/server/security/hashToken';
+import passwordSchema from '@/server/security/passwordSchema';
 import verifyPassword from '@/server/security/verifyPassword';
 import TenantService from '@/server/tenant/TenantService';
 import UserService from '@/server/user/UserService';
@@ -17,13 +18,13 @@ import parseInput from '@/server/validation/parseInput';
 
 const loginSchema = z.object({email: z.string().trim().min(1), password: z.string().min(1)});
 const resetRequestSchema = z.object({email: z.email()});
-const resetSchema = z.object({password: z.string().min(10).max(200), token: z.string().min(10)});
+const resetSchema = z.object({password: passwordSchema, token: z.string().min(10)});
 const registerSchema = z.object({
     companyName: z.string().trim().min(1).max(255),
     email:       z.email(),
     locale:      z.enum(['de', 'en']).optional(),
     name:        z.string().trim().min(1).max(255),
-    password:    z.string().min(10).max(200),
+    password:    passwordSchema,
 });
 
 const RESET_VALIDITY_MS = 2 * 60 * 60 * 1000;

@@ -69,6 +69,8 @@ aside?*
 **Accounts and integration**
 
 - Users with the roles *admin* and *user*; e-mail and password login, password reset by e-mail
+- Passwords need at least 9 characters with upper-case and lower-case letters and a digit;
+  special characters are allowed but not required
 - Profile picture upload with Gravatar fallback; language, time zone and theme per user
 - Personal API tokens (read or read/write) for the REST API and the MCP server
 - OpenAPI 3.1 description and interactive API documentation inside the app
@@ -305,6 +307,7 @@ src/
     i18n/           Translation runtime
     server/         Services: auth, database, invoices, billing, PDF, mail, MCP, OpenAPI, …
     translations/   de/ and en/ – plain key/value objects
+    validation/     Rules shared by server and browser (password policy)
 test/               Vitest: calculations, helpers and an SQLite integration test
 ```
 

@@ -9,6 +9,7 @@ import EntityService from '@/server/entity/EntityService';
 import invoiceInputSchema from '@/server/invoice/invoiceInputSchema';
 import InvoiceService from '@/server/invoice/InvoiceService';
 import type McpTool from '@/server/mcp/McpTool';
+import passwordSchema from '@/server/security/passwordSchema';
 import TenantService from '@/server/tenant/TenantService';
 import UserService from '@/server/user/UserService';
 
@@ -205,7 +206,7 @@ export default function buildMcpTools(): McpTool[] {
             adminOnly:   true,
             description: 'Create a user (admins only).',
             handler:     (context, args) => new UserService().create(context, args),
-            inputSchema: z.object({email: z.email(), locale: z.enum(['de', 'en']).optional(), name: z.string(), password: z.string().min(10), role: z.enum(['admin', 'user']).optional()}),
+            inputSchema: z.object({email: z.email(), locale: z.enum(['de', 'en']).optional(), name: z.string(), password: passwordSchema, role: z.enum(['admin', 'user']).optional()}),
             name:        'create_user',
             readOnly:    false,
         },
@@ -214,7 +215,7 @@ export default function buildMcpTools(): McpTool[] {
             description: 'Update a user (admins only).',
             handler:     (context, args) => new UserService().update(context, args.id, args.data),
             inputSchema: z.object({
-                data: z.object({active: z.boolean().optional(), email: z.email().optional(), name: z.string().optional(), password: z.string().min(10).optional(), role: z.enum(['admin', 'user']).optional()}),
+                data: z.object({active: z.boolean().optional(), email: z.email().optional(), name: z.string().optional(), password: passwordSchema.optional(), role: z.enum(['admin', 'user']).optional()}),
                 id:   z.uuid(),
             }),
             name:        'update_user',

@@ -56,7 +56,7 @@ const account = {
     'users.newPasswordHint':      'Leave empty to keep the password.',
     'users.noMailHint':           'E-mail is not configured: pass the password on to the user yourself.',
     'users.password':             'Password',
-    'users.passwordHint':         'At least 10 characters.',
+    'users.passwordHint':         'At least 9 characters with upper- and lower-case letters and a digit.',
     'users.role':                 'Role',
     'users.role.admin':           'Administrator',
     'users.role.user':            'User',

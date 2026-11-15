@@ -9,6 +9,7 @@ import FormField from '@/component/ui/FormField';
 import inputClass from '@/component/ui/inputClass';
 import Notice from '@/component/ui/Notice';
 import useI18n from '@/i18n/useI18n';
+import isStrongPassword from '@/validation/isStrongPassword';
 
 /**
  * Self-registration of a new tenant (APP_MODE=multi).
@@ -28,8 +29,12 @@ export default function RegisterForm() {
     return (
         <form className="flex flex-col gap-5" onSubmit={async (event) => {
             event.preventDefault();
-            setBusy(true);
             setError(null);
+            if (!isStrongPassword(form.password)) {
+                setErrors({password: t('users.passwordHint')});
+                return;
+            }
+            setBusy(true);
             try {
                 await apiFetch('/api/auth/register', {body: {...form, locale}});
                 window.location.href = '/settings';

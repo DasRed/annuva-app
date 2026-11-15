@@ -20,7 +20,7 @@ describe('services with SQLite', () => {
         await bootstrap();
         const {default: SetupService} = await import('@/server/setup/SetupService');
         const user = await new SetupService().complete({
-            admin:    {email: 'admin@example.com', name: 'Admin', password: 'very-secret-password'},
+            admin:    {email: 'admin@example.com', name: 'Admin', password: 'Very-secret-passw0rd'},
             settings: {companyName: 'Example GmbH', name: 'Example', vatMode: 'small_business'},
             template: {name: 'Standard', paymentTermDays: 10},
             token:    'test-setup-token',

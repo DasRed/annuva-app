@@ -10,13 +10,14 @@ import getDb from '@/server/db/getDb';
 import type UserTable from '@/server/db/table/UserTable';
 import ApiError from '@/server/error/ApiError';
 import hashPassword from '@/server/security/hashPassword';
+import strongPassword from '@/server/security/passwordSchema';
 import verifyPassword from '@/server/security/verifyPassword';
 import type PublicUser from '@/server/user/PublicUser';
 import toPublicUser from '@/server/user/toPublicUser';
 import newId from '@/server/util/newId';
 import nowIso from '@/server/util/nowIso';
 
-const password = z.string().min(10, 'At least 10 characters').max(200);
+const password = strongPassword;
 const locale = z.enum(locales as ['de', 'en']);
 const theme = z.enum(['system', 'light', 'dark']);
 
