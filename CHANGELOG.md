@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/dasred/annuva-app/compare/v1.2.1...v1.3.0) (2026-11-15)
+
+
+### Features
+
+* two-factor authentication, signature on invoices and new PDF header ([932bf6b](https://github.com/dasred/annuva-app/commit/932bf6bf1c08b938cefce2785c631a85300b904f))
+
 ## [1.2.1](https://github.com/dasred/annuva-app/compare/v1.2.0...v1.2.1) (2026-11-15)
 
 
