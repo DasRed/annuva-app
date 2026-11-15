@@ -5,6 +5,7 @@ import writeAudit from '@/server/audit/writeAudit';
 import assertTenant from '@/server/auth/assertTenant';
 import assertWrite from '@/server/auth/assertWrite';
 import type AuthContext from '@/server/auth/AuthContext';
+import buildChargeTitle from '@/server/billing/buildChargeTitle';
 import getDb from '@/server/db/getDb';
 import addDays from '@/server/invoice/addDays';
 import addMonths from '@/server/invoice/addMonths';
@@ -89,7 +90,7 @@ export default class BillingService {
                 const customerSuffix = key.startsWith('partner:') ? ` – ${charge.customerName}` : '';
                 return {
                     customerId:  charge.customerId as string,
-                    description: `${label}${charge.description ? ` ${charge.description}` : ''}${customerSuffix} (${formatPeriodDate(from, language)} – ${formatPeriodDate(to, language)})`.slice(0, 255),
+                    description: `${buildChargeTitle(label, charge.description)}${customerSuffix} (${formatPeriodDate(from, language)} – ${formatPeriodDate(to, language)})`.slice(0, 255),
                     quantity:    1,
                     unitPrice:   Math.round((charge.amountPerYear * months) / 12) / 100,
                 };
