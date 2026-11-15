@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/dasred/annuva-app/compare/v1.1.0...v1.2.0) (2026-11-15)
+
+
+### Features
+
+* instant saving, template live preview and token validity ([87c41db](https://github.com/dasred/annuva-app/commit/87c41dbc6b7aea7117e90bb251fab06061ee650d))
+
 # [1.1.0](https://github.com/dasred/annuva-app/compare/v1.0.1...v1.1.0) (2026-11-15)
 
 
