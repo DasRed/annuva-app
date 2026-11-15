@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/dasred/annuva-app/compare/v1.2.0...v1.2.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* deploy of demo ([5a966e0](https://github.com/dasred/annuva-app/commit/5a966e04229cbcebd518758591593435d5dde8e1))
+
 # [1.2.0](https://github.com/dasred/annuva-app/compare/v1.1.0...v1.2.0) (2026-11-15)
 
 
