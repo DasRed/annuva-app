@@ -1,3 +1,17 @@
+# [2.0.0](https://github.com/DasRed/annuva-app/compare/v1.4.0...v2.0.0) (2026-11-16)
+
+
+* feat!: structured billing address with optional different recipient ([3a34899](https://github.com/DasRed/annuva-app/commit/3a34899b96fff2317d12c77ccc2072db047997e4))
+
+
+### BREAKING CHANGES
+
+* the API fields `billingAddress` (customers, partners)
+and `address` (settings) are replaced by the structured address fields.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018gpzqZAVTya74MfVHYUTjn
+
 # [1.4.0](https://github.com/DasRed/annuva-app/compare/v1.3.1...v1.4.0) (2026-11-15)
 
 
