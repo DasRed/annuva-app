@@ -26,5 +26,6 @@ export default async function CustomerPage({params}: { params: Promise<{ id: str
         throw error;
     });
     const dashboard = await new DashboardService().get(session.context, {customerId: id});
-    return <CustomerDetailView customer={customer} rating={dashboard.customers[0] ?? null}/>;
+    const homeCountry = typeof session.settings?.country === 'string' ? session.settings.country : null;
+    return <CustomerDetailView customer={customer} homeCountry={homeCountry} rating={dashboard.customers[0] ?? null}/>;
 }

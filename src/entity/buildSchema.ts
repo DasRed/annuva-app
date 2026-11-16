@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import countryCodes from '@/address/countryCodes';
 import type FieldDefinition from '@/entity/FieldDefinition';
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
@@ -9,6 +10,8 @@ function fieldSchema(field: FieldDefinition): z.ZodType {
             return z.boolean();
         case 'color':
             return z.string().regex(/^#[\da-f]{6}$/i, 'Expected a colour like #0f6b5c');
+        case 'country':
+            return z.enum(countryCodes);
         case 'date':
             return z.string().regex(isoDate, 'Expected a date in the format YYYY-MM-DD');
         case 'datetime':

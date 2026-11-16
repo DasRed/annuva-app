@@ -18,6 +18,7 @@ const account: Record<keyof typeof accountEn, string> = {
     'profile.title':              'Profil',
     'profile.uploadPicture':      'Bild hochladen',
     'settings.description':       'Firmendaten, Rechnungsstellung und Steuer. Diese Angaben stehen auf den Rechnungen.',
+    'settings.group.address':     'Adresse',
     'settings.group.bank':        'Bankverbindung',
     'settings.group.company':     'Firma',
     'settings.group.invoicing':   'Rechnungsstellung',

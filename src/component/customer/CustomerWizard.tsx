@@ -2,10 +2,14 @@
 
 import {IconArrowLeft, IconArrowRight, IconCheck} from '@tabler/icons-react';
 import {useRouter} from 'next/navigation';
-import {useState} from 'react';
+import {Fragment, useState} from 'react';
+import addressFieldNames from '@/address/addressFieldNames';
+import missingAddressParts from '@/address/missingAddressParts';
+import postalAddressOf from '@/address/postalAddressOf';
 import apiFetch from '@/client/apiFetch';
 import ApiClientError from '@/client/ApiClientError';
 import loadLookup from '@/client/loadLookup';
+import FieldGroupHeading from '@/component/entity/FieldGroupHeading';
 import FieldInput from '@/component/entity/FieldInput';
 import RowListEditor from '@/component/entity/RowListEditor';
 import Button from '@/component/ui/Button';
@@ -25,7 +29,10 @@ import useI18n from '@/i18n/useI18n';
 type Rows = Record<string, string>[];
 
 const basics = ['name', 'channel', 'partnerId', 'status', 'language'];
-const contact = ['contactName', 'email', 'phone', 'billingAddress', 'vatId', 'hourlyRate', 'hostingSummary', 'notes'];
+const contact = [
+    'contactName', 'email', 'phone', 'hourlyRate', 'hostingSummary', 'notes', 'billingName', 'billingContactName', 'billingStreet', 'billingHouseNumber',
+    'billingPostalCode', 'billingCity', 'billingAddressAddition', 'billingCountry', 'billingEmail', 'vatId',
+];
 
 function nextInvoiceDate(month: number): string {
     const now = new Date();
@@ -76,24 +83,27 @@ export default function CustomerWizard({defaultHostingPerYear, onDone, recurring
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {names.map((name) => definition.fields.find((field) => field.name === name)!)
                   .filter((field) => field.visibleWhen === undefined || field.visibleWhen.values.includes(customer[field.visibleWhen.field]))
-                  .map((field) => (
-                      <FormField
-                          key={field.name}
-                          htmlFor={`customer-${field.name}`}
-                          label={td(`field.customers.${field.name}`, humanize(field.name))}
-                          required={field.required === true}
-                          error={errors[field.name]}
-                          className={field.type === 'text' ? 'sm:col-span-full' : ''}
-                      >
-                          <FieldInput
-                              entity="customers"
-                              field={field}
-                              id={`customer-${field.name}`}
-                              value={customer[field.name] ?? ''}
-                              invalid={errors[field.name] !== undefined}
-                              onChange={(value) => setCustomer((current) => ({...current, [field.name]: value}))}
-                          />
-                      </FormField>
+                  .map((field, index, list) => (
+                      <Fragment key={field.name}>
+                          {field.group !== undefined && field.group !== list[index - 1]?.group ? <FieldGroupHeading entity="customers" group={field.group}/> : null}
+                          <FormField
+                              htmlFor={`customer-${field.name}`}
+                              label={td(`field.customers.${field.name}`, humanize(field.name))}
+                              required={field.required === true}
+                              error={errors[field.name]}
+                              hint={td(`hint.customers.${field.name}`, '') || undefined}
+                              className={field.type === 'text' ? 'sm:col-span-full' : ''}
+                          >
+                              <FieldInput
+                                  entity="customers"
+                                  field={field}
+                                  id={`customer-${field.name}`}
+                                  value={customer[field.name] ?? ''}
+                                  invalid={errors[field.name] !== undefined}
+                                  onChange={(value) => setCustomer((current) => ({...current, [field.name]: value}))}
+                              />
+                          </FormField>
+                      </Fragment>
                   ))}
             {customer.channel === 'partner' ? (
                 <FormField htmlFor="customer-new-partner" label={t('wizard.customer.newPartner')} hint={t('wizard.customer.newPartnerHint')}>
@@ -115,7 +125,18 @@ export default function CustomerWizard({defaultHostingPerYear, onDone, recurring
         return Object.keys(next).length === 0;
     };
 
+    const validateBilling = (): boolean => {
+        const names = addressFieldNames('billing');
+        const next = Object.fromEntries(missingAddressParts(postalAddressOf(customer, 'billing')).map((part) => [names[part], t('validation.required')]));
+        setErrors(next);
+        return Object.keys(next).length === 0;
+    };
+
     const save = async () => {
+        if (created === null && !validateBilling()) {
+            setStep(1);
+            return;
+        }
         setSaving(true);
         setError(null);
         try {
@@ -238,7 +259,7 @@ export default function CustomerWizard({defaultHostingPerYear, onDone, recurring
                             variant="primary"
                             icon={<IconArrowRight size={18} stroke={1.75}/>}
                             onClick={() => {
-                                if (step === 0 && !validateBasics()) {
+                                if ((step === 0 && !validateBasics()) || (step === 1 && !validateBilling())) {
                                     return;
                                 }
                                 setStep(step + 1);

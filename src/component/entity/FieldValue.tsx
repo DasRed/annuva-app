@@ -2,6 +2,7 @@
 
 import {IconPaperclip} from '@tabler/icons-react';
 import Link from 'next/link';
+import countryName from '@/address/countryName';
 import useLookup from '@/client/useLookup';
 import type EntityName from '@/entity/EntityName';
 import type FieldDefinition from '@/entity/FieldDefinition';
@@ -11,7 +12,7 @@ import useI18n from '@/i18n/useI18n';
  * Read-only display of a field value, formatted for the user's locale.
  */
 export default function FieldValue({entity, field, value}: { entity: EntityName; field: FieldDefinition; value: unknown }) {
-    const {date, money, month, number, td} = useI18n();
+    const {date, locale, money, month, number, td} = useI18n();
     const lookup = useLookup(field.type === 'relation' ? field.relation : undefined);
 
     if (value === null || value === undefined || value === '') {
@@ -27,6 +28,8 @@ export default function FieldValue({entity, field, value}: { entity: EntityName;
                     <code className="text-xs">{String(value)}</code>
                 </span>
             );
+        case 'country':
+            return <>{countryName(String(value), locale)}</>;
         case 'date':
             return <span className="tabular">{date(String(value))}</span>;
         case 'datetime':

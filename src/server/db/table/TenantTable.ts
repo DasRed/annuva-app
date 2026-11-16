@@ -1,8 +1,10 @@
 export default interface TenantTable {
-    address: string | null;
+    addressAddition: string | null;
     bankName: string | null;
     bic: string | null;
+    city: string | null;
     companyName: string | null;
+    country: string | null;
     createdAt: string;
     currency: string;
     defaultHostingPerYear: number;
@@ -10,15 +12,18 @@ export default interface TenantTable {
     defaultVatRate: number;
     domainPassThrough: string;
     email: string | null;
+    houseNumber: string | null;
     iban: string | null;
     id: string;
     invoiceNumberFormat: string;
     locale: string;
     name: string;
     phone: string | null;
+    postalCode: string | null;
     recurringInvoiceMonth: number;
     serverCostAllocation: string;
     setupCompletedAt: string | null;
+    street: string | null;
     taxNumber: string | null;
     taxPaymentMonth: number;
     timezone: string;

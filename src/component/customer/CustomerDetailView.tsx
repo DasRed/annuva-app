@@ -3,6 +3,9 @@
 import {IconArchive, IconArchiveOff, IconFilePlus, IconPencil} from '@tabler/icons-react';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
+import addressFieldNames from '@/address/addressFieldNames';
+import recipientAddressLines from '@/address/recipientAddressLines';
+import resolveBillingRecipient from '@/address/resolveBillingRecipient';
 import apiFetch from '@/client/apiFetch';
 import ApiClientError from '@/client/ApiClientError';
 import loadLookup from '@/client/loadLookup';
@@ -27,12 +30,20 @@ import humanize from '@/entity/humanize';
 import useI18n from '@/i18n/useI18n';
 
 const tabs: ('overview' | EntityName)[] = ['overview', 'invoices', 'offers', 'recurringCharges', 'resources', 'recurringCosts', 'expenses', 'tasks'];
+/** Fields shown together as the billing address in the overview. */
+const addressFields: readonly string[] = ['billingName', 'billingContactName', ...Object.values(addressFieldNames('billing'))];
 
 /**
- * Everything about one customer: key figures, master data and all linked records in tabs.
+ * Everything about one customer: key figures, master data and all linked records in tabs. The
+ * billing address is shown as it appears on invoices, including the fallbacks to the customer data.
  */
-export default function CustomerDetailView({customer, rating}: { customer: EntityRecord; rating: DashboardResult['customers'][number] | null }) {
-    const {date, money, t, td} = useI18n();
+export default function CustomerDetailView({customer, homeCountry, rating}: {
+    customer: EntityRecord;
+    /** Country of the tenant; the customer's country is only shown when it differs. */
+    homeCountry: string | null;
+    rating: DashboardResult['customers'][number] | null;
+}) {
+    const {date, locale, money, t, td} = useI18n();
     const router = useRouter();
     const [tab, setTab] = useState<(typeof tabs)[number]>('overview');
     const [editing, setEditing] = useState(false);
@@ -40,6 +51,8 @@ export default function CustomerDetailView({customer, rating}: { customer: Entit
     const [error, setError] = useState<string | null>(null);
     const archived = customer.archivedAt !== null;
     const definition = entities.customers;
+    const recipient = resolveBillingRecipient(customer);
+    const billingAddress = [recipient.name, ...recipientAddressLines(recipient, {homeCountry, language: locale})].join('\n');
 
     const archive = async (value: boolean) => {
         setError(null);
@@ -110,11 +123,18 @@ export default function CustomerDetailView({customer, rating}: { customer: Entit
                 {tab === 'overview' ? (
                     <Card>
                         <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                            {definition.fields.filter((field) => field.name !== 'name' && field.name !== 'archivedAt').map((field) => (
-                                <div key={field.name} className={field.type === 'text' ? 'sm:col-span-2' : ''}>
-                                    <dt className="text-xs font-semibold tracking-wide text-text-muted uppercase">{td(`field.customers.${field.name}`, humanize(field.name))}</dt>
-                                    <dd className="mt-0.5 whitespace-pre-line"><FieldValue entity="customers" field={field} value={customer[field.name]}/></dd>
-                                </div>
+                            {definition.fields.filter((field) => field.name !== 'name' && field.name !== 'archivedAt' && (field.name === 'billingName' || !addressFields.includes(field.name))).map((field) => (
+                                field.name === 'billingName' ? (
+                                    <div key="billingAddress">
+                                        <dt className="text-xs font-semibold tracking-wide text-text-muted uppercase">{t('customer.billingAddress')}</dt>
+                                        <dd className="mt-0.5 whitespace-pre-line">{billingAddress}</dd>
+                                    </div>
+                                ) : (
+                                    <div key={field.name} className={field.type === 'text' ? 'sm:col-span-2' : ''}>
+                                        <dt className="text-xs font-semibold tracking-wide text-text-muted uppercase">{td(`field.customers.${field.name}`, humanize(field.name))}</dt>
+                                        <dd className="mt-0.5 whitespace-pre-line"><FieldValue entity="customers" field={field} value={customer[field.name]}/></dd>
+                                    </div>
+                                )
                             ))}
                         </dl>
                     </Card>

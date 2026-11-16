@@ -6,7 +6,12 @@ import type FieldDefinition from '@/entity/FieldDefinition';
 const settingsFields: readonly FieldDefinition[] = [
     {max: 255, name: 'name', required: true, type: 'string'},
     {max: 255, name: 'companyName', type: 'string'},
-    {name: 'address', type: 'text'},
+    {max: 255, name: 'street', type: 'string'},
+    {max: 32, name: 'houseNumber', type: 'string'},
+    {max: 16, name: 'postalCode', type: 'string'},
+    {max: 255, name: 'city', type: 'string'},
+    {max: 255, name: 'addressAddition', type: 'string'},
+    {default: 'DE', name: 'country', type: 'country'},
     {max: 255, name: 'email', type: 'email'},
     {max: 64, name: 'phone', type: 'string'},
     {max: 255, name: 'website', type: 'string'},

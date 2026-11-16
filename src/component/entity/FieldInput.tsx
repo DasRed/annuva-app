@@ -1,5 +1,7 @@
 'use client';
 
+import countryCodes from '@/address/countryCodes';
+import countryName from '@/address/countryName';
 import FileField from '@/component/entity/FileField';
 import RelationSelect from '@/component/entity/RelationSelect';
 import inputClass from '@/component/ui/inputClass';
@@ -19,7 +21,7 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
     onChange: (value: string) => void;
     value: string;
 }) {
-    const {currency, month, td} = useI18n();
+    const {currency, locale, month, td} = useI18n();
     const placeholder = td(`placeholder.${entity}.${field.name}`, '') || undefined;
     const common = {'aria-invalid': invalid, className: inputClass, id, onChange: (event: { target: { value: string } }) => onChange(event.target.value), placeholder, value};
 
@@ -50,6 +52,15 @@ export default function FieldInput({entity, field, id, invalid, onChange, value}
                     />
                     <input type="text" maxLength={7} spellCheck={false} {...common} className={`${inputClass} font-mono`}/>
                 </div>
+            );
+        case 'country':
+            return (
+                <select {...common}>
+                    {field.required !== true ? <option value="">—</option> : null}
+                    {countryCodes.map((code) => ({code, name: countryName(code, locale)}))
+                                 .toSorted((first, second) => first.name.localeCompare(second.name, locale))
+                                 .map((country) => <option key={country.code} value={country.code}>{country.name}</option>)}
+                </select>
             );
         case 'date':
             return <input type="date" {...common}/>;

@@ -1,8 +1,9 @@
 'use client';
 
-import {type FormEvent, useEffect, useMemo, useRef, useState} from 'react';
+import {type FormEvent, Fragment, useEffect, useMemo, useRef, useState} from 'react';
 import ApiClientError from '@/client/ApiClientError';
 import useAutoSave from '@/client/useAutoSave';
+import FieldGroupHeading from '@/component/entity/FieldGroupHeading';
 import FieldInput from '@/component/entity/FieldInput';
 import FormField from '@/component/ui/FormField';
 import SaveIndicator from '@/component/ui/SaveIndicator';
@@ -104,42 +105,44 @@ export default function EntityForm({autoSave, columns = 2, defaults = {}, entity
 
     const renderFields = (list: FieldDefinition[]) => (
         <div className={`grid gap-4 sm:grid-cols-2 ${columns === 3 ? 'xl:grid-cols-3' : ''}`}>
-            {list.map((field) => {
+            {list.map((field, index) => {
                 const id = `${formId}-${field.name}`;
                 return (
-                    <FormField
-                        key={field.name}
-                        htmlFor={id}
-                        label={td(`field.${entity}.${field.name}`, humanize(field.name))}
-                        required={field.required === true && field.type !== 'boolean'}
-                        error={states[field.name]?.status === 'error' ? states[field.name].message : errors[field.name]}
-                        status={autoSave === undefined ? undefined : <SaveIndicator state={states[field.name]}/>}
-                        hint={td(`hint.${entity}.${field.name}`, '') || undefined}
-                        className={field.type === 'text' ? 'sm:col-span-full' : ''}
-                    >
-                        <div
-                            className="contents"
-                            onBlur={(event) => {
-                                if (!SAVE_ON_CHANGE.includes(field.type) && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
-                                    void commit(field, values[field.name] ?? '');
-                                }
-                            }}
+                    <Fragment key={field.name}>
+                        {field.group !== undefined && field.group !== list[index - 1]?.group ? <FieldGroupHeading entity={entity} group={field.group}/> : null}
+                        <FormField
+                            htmlFor={id}
+                            label={td(`field.${entity}.${field.name}`, humanize(field.name))}
+                            required={field.required === true && field.type !== 'boolean'}
+                            error={states[field.name]?.status === 'error' ? states[field.name].message : errors[field.name]}
+                            status={autoSave === undefined ? undefined : <SaveIndicator state={states[field.name]}/>}
+                            hint={td(`hint.${entity}.${field.name}`, '') || undefined}
+                            className={field.type === 'text' ? 'sm:col-span-full' : ''}
                         >
-                            <FieldInput
-                                entity={entity}
-                                field={field}
-                                id={id}
-                                invalid={errors[field.name] !== undefined || states[field.name]?.status === 'error'}
-                                value={values[field.name] ?? ''}
-                                onChange={(value) => {
-                                    setValues((current) => ({...current, [field.name]: value}));
-                                    if (SAVE_ON_CHANGE.includes(field.type)) {
-                                        void commit(field, value);
+                            <div
+                                className="contents"
+                                onBlur={(event) => {
+                                    if (!SAVE_ON_CHANGE.includes(field.type) && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                                        void commit(field, values[field.name] ?? '');
                                     }
                                 }}
-                            />
-                        </div>
-                    </FormField>
+                            >
+                                <FieldInput
+                                    entity={entity}
+                                    field={field}
+                                    id={id}
+                                    invalid={errors[field.name] !== undefined || states[field.name]?.status === 'error'}
+                                    value={values[field.name] ?? ''}
+                                    onChange={(value) => {
+                                        setValues((current) => ({...current, [field.name]: value}));
+                                        if (SAVE_ON_CHANGE.includes(field.type)) {
+                                            void commit(field, value);
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </FormField>
+                    </Fragment>
                 );
             })}
         </div>

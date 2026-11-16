@@ -16,6 +16,7 @@ const account = {
     'profile.title':              'Profile',
     'profile.uploadPicture':      'Upload picture',
     'settings.description':       'Company data, invoicing and tax. These details appear on invoices.',
+    'settings.group.address':     'Address',
     'settings.group.bank':        'Bank details',
     'settings.group.company':     'Company',
     'settings.group.invoicing':   'Invoicing',

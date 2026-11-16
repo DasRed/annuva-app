@@ -1,4 +1,6 @@
 import type {Kysely} from 'kysely';
+import recipientAddressLines from '@/address/recipientAddressLines';
+import resolveBillingRecipient from '@/address/resolveBillingRecipient';
 import type AuthContext from '@/server/auth/AuthContext';
 import getDb from '@/server/db/getDb';
 import type InvoiceLineTable from '@/server/db/table/InvoiceLineTable';
@@ -12,8 +14,8 @@ import TenantService from '@/server/tenant/TenantService';
 type Row = Record<string, any>;
 
 /**
- * Collects all data printed on an invoice: tenant, recipient (customer or partner), template incl.
- * logo, positions and totals.
+ * Collects all data printed on an invoice: tenant, recipient (customer or partner, with the
+ * fallbacks of `resolveBillingRecipient`), template incl. logo, positions and totals.
  */
 export default async function buildInvoiceSnapshot(context: AuthContext, invoice: Row, lines: InvoiceLineTable[]): Promise<InvoiceSnapshot> {
     const db = (await getDb()) as unknown as Kysely<any>;
@@ -34,7 +36,8 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
                       ? null
                       : await db.selectFrom('invoices').select('number').where('id', '=', invoice.cancelsInvoiceId).executeTakeFirst() as Row | undefined;
     const totals = calculateTotals(lines, tenant.vatMode);
-    const recipient = partner ?? customer;
+    const recipient = resolveBillingRecipient(partner ?? customer);
+    const recipientAddress = recipientAddressLines(recipient, {homeCountry: tenant.country, language});
 
     return {
         cancelsNumber:   cancelled?.number ?? null,
@@ -56,8 +59,8 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
         notes:           invoice.notes,
         number:          invoice.number,
         recipient:       {
-            address: [recipient.contactName ?? null, recipient.billingAddress ?? null].filter(Boolean).join('\n') || null,
-            email:   recipient.email ?? null,
+            address: recipientAddress.length === 0 ? null : recipientAddress.join('\n'),
+            email:   recipient.email,
             name:    recipient.name,
         },
         serviceDateFrom: invoice.serviceDateFrom,
@@ -75,7 +78,7 @@ export default async function buildInvoiceSnapshot(context: AuthContext, invoice
             signature:     await loadTemplateImage(context, template?.signatureFileId),
             signatureName: template?.signatureName ?? null,
         },
-        tenant:          snapshotTenant(tenant),
+        tenant:          snapshotTenant(tenant, {language, recipientCountry: recipient.address.country}),
         vatMode:         tenant.vatMode,
     };
 }

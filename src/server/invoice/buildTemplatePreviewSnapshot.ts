@@ -91,7 +91,7 @@ export default async function buildTemplatePreviewSnapshot(context: AuthContext,
             signature:     await loadTemplateImage(context, values.signatureFileId),
             signatureName: text(values.signatureName),
         },
-        tenant:          snapshotTenant(tenant),
+        tenant:          snapshotTenant(tenant, {language, recipientCountry: tenant.country}),
         vatMode:         tenant.vatMode,
     };
 }

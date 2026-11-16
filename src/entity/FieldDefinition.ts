@@ -10,6 +10,8 @@ export default interface FieldDefinition {
     accept?: string;
     /** Default value for new records. */
     default?: boolean | number | string | null;
+    /** Visual group in forms: the first field of a group gets a heading ("group.<entity>.<group>"). */
+    group?: string;
     /** Show the field in list tables. */
     list?: boolean;
     /** Maximum length for string fields, maximum value for integer fields. */

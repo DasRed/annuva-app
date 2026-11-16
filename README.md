@@ -197,6 +197,14 @@ shown separately.
 snapshot are fixed) → `paid`. An open or paid invoice can only be cancelled; the cancellation is a
 new invoice with negative amounts that references the original.
 
+**Invoice recipient.** Invoices go to the customer – or to the partner for customers billed through
+a partner. The billing address consists of separate fields: street, house number, postal code, city,
+an additional line and the country. A different billing recipient, contact person and e-mail are
+optional; empty fields fall back to the name, contact person and e-mail of the customer or partner
+(the contact person only when no different recipient is set). Once an address is started, street,
+postal code and city are required. The country is printed only when it differs from the country of
+your own address in the settings, which is structured the same way.
+
 **Billing run.** Collects all recurring charges due until a date, creates one draft per recipient
 and moves each charge to its next invoice date. Running it twice does not create duplicates.
 
@@ -302,6 +310,7 @@ Vitest.
 
 ```
 src/
+    address/        Postal addresses: formatting, invoice recipient, validation, legacy parsing
     app/            Routes: pages (app), (auth), setup and the API under app/api
     calculation/    Pure dashboard calculations (tested without a database)
     client/         Browser helpers: API client, hooks

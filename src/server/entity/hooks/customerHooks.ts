@@ -1,4 +1,5 @@
 import type EntityHooks from '@/server/entity/EntityHooks';
+import assertCompleteBillingAddress from '@/server/entity/hooks/assertCompleteBillingAddress';
 import countReferences from '@/server/entity/countReferences';
 import ApiError from '@/server/error/ApiError';
 
@@ -25,6 +26,7 @@ const customerHooks: EntityHooks = {
         if (data.channel === 'partner' && data.partnerId === null) {
             throw ApiError.badRequest('partner_required', 'Customers billed through a partner need a partner.', {field: 'partnerId'});
         }
+        assertCompleteBillingAddress({}, data);
         return Promise.resolve();
     },
 
@@ -42,6 +44,7 @@ const customerHooks: EntityHooks = {
         if (channel === 'partner' && (partnerId === null || partnerId === undefined)) {
             throw ApiError.badRequest('partner_required', 'Customers billed through a partner need a partner.', {field: 'partnerId'});
         }
+        assertCompleteBillingAddress(existing, data);
         return Promise.resolve();
     },
 };

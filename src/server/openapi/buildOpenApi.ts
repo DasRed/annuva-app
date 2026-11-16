@@ -20,9 +20,10 @@ function jsonSchema(schema: z.ZodType): Json {
 function recordSchema(fields: readonly FieldDefinition[]): Json {
     const types: Record<string, Json> = {
         boolean:  {type: 'boolean'},
+        color:    {pattern: '^#[0-9a-fA-F]{6}$', type: 'string'},
+        country:  {description: 'ISO 3166-1 alpha-2 country code', pattern: '^[A-Z]{2}$', type: 'string'},
         date:     {format: 'date', type: 'string'},
         datetime: {format: 'date-time', type: 'string'},
-        color:    {pattern: '^#[0-9a-fA-F]{6}$', type: 'string'},
         email:    {format: 'email', type: 'string'},
         file:     {format: 'uuid', type: 'string'},
         integer:  {type: 'integer'},

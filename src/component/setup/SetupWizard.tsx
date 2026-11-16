@@ -22,7 +22,10 @@ import toFormValue from '@/entity/toFormValue';
 import useI18n from '@/i18n/useI18n';
 import isStrongPassword from '@/validation/isStrongPassword';
 
-const companyFields = ['companyName', 'address', 'email', 'phone', 'website', 'vatMode', 'defaultVatRate', 'taxNumber', 'vatId', 'currency', 'locale', 'invoiceNumberFormat', 'iban', 'bic', 'bankName'];
+const companyFields = [
+    'companyName', 'street', 'houseNumber', 'postalCode', 'city', 'addressAddition', 'country', 'email', 'phone', 'website', 'vatMode', 'defaultVatRate',
+    'taxNumber', 'vatId', 'currency', 'locale', 'invoiceNumberFormat', 'iban', 'bic', 'bankName',
+];
 const templateFields = ['senderLine', 'introText', 'closingText', 'accentColor', 'paymentTermDays', 'logoFileId'];
 
 /**

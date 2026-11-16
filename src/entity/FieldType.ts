@@ -1,6 +1,7 @@
 type FieldType =
     | 'boolean'
     | 'color'
+    | 'country'
     | 'date'
     | 'datetime'
     | 'email'

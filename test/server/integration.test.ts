@@ -91,6 +91,38 @@ describe('services with SQLite', () => {
         await expect(customers.remove(context, customer.id)).rejects.toThrow(/linked records/);
     });
 
+    it('addresses invoices to the billing recipient', async () => {
+        const {default: EntityService} = await import('@/server/entity/EntityService');
+        const {default: InvoiceService} = await import('@/server/invoice/InvoiceService');
+        const {default: TenantService} = await import('@/server/tenant/TenantService');
+        const {default: getDb} = await import('@/server/db/getDb');
+        const customers = new EntityService('customers');
+        await expect(customers.create(context, {billingCity: 'Wien', name: 'Unvollständig'})).rejects.toThrow(/billing address/);
+
+        const customer = await customers.create(context, {
+            billingCity:        'Wien',
+            billingCountry:     'AT',
+            billingEmail:       'rechnung@example.com',
+            billingHouseNumber: '1',
+            billingName:        'Holding AG',
+            billingPostalCode:  '1010',
+            billingStreet:      'Graben',
+            contactName:        'Hans Meier',
+            email:              'kunde@example.com',
+            name:               'Kunde B',
+        });
+        await expect(customers.update(context, customer.id, {billingStreet: null})).rejects.toThrow(/billing address/);
+        await new TenantService().updateSettings(context, {city: 'Musterstadt', houseNumber: '2', postalCode: '12345', street: 'Musterweg'});
+
+        const invoices = new InvoiceService();
+        const invoice = await invoices.create(context, {customerId: customer.id, description: 'Beratung', lines: [{description: 'Work', quantity: 1, unitPrice: 80}]});
+        await invoices.issue(context, invoice.id, {date: '2026-03-01'});
+        const row = await (await getDb()).selectFrom('invoices').select('snapshot').where('id', '=', invoice.id).executeTakeFirstOrThrow();
+        const snapshot = JSON.parse(String(row.snapshot)) as import('@/server/invoice/InvoiceSnapshot').default;
+        expect(snapshot.recipient).toEqual({address: 'Graben 1\n1010 Wien\nÖSTERREICH', email: 'rechnung@example.com', name: 'Holding AG'});
+        expect(snapshot.tenant.address).toBe('Musterweg 2\n12345 Musterstadt\nDEUTSCHLAND');
+    });
+
     it('enforces read-only tokens and tenant isolation', async () => {
         const {default: EntityService} = await import('@/server/entity/EntityService');
         const service = new EntityService('partners');

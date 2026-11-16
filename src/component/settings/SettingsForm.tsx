@@ -34,7 +34,8 @@ export default function SettingsForm({settings}: { settings: Record<string, unkn
                 formId="settings"
                 initial={settings}
                 sections={[
-                    {fields: ['name', 'companyName', 'address', 'email', 'phone', 'website'], title: t('settings.group.company')},
+                    {fields: ['name', 'companyName', 'email', 'phone', 'website'], title: t('settings.group.company')},
+                    {fields: ['street', 'houseNumber', 'postalCode', 'city', 'addressAddition', 'country'], title: t('settings.group.address')},
                     {fields: ['vatMode', 'defaultVatRate', 'taxNumber', 'vatId', 'taxPaymentMonth'], title: t('settings.group.tax')},
                     {fields: ['invoiceNumberFormat', 'currency', 'locale', 'timezone', 'recurringInvoiceMonth', 'defaultHourlyRate', 'defaultHostingPerYear', 'domainPassThrough', 'serverCostAllocation'], title: t('settings.group.invoicing')},
                     {fields: ['bankName', 'iban', 'bic'], title: t('settings.group.bank')},
