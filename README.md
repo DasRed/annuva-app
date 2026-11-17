@@ -237,12 +237,23 @@ or `read_write` and may expire. In the browser the session cookie works as well.
 | `GET /api/v1/invoices/{id}/pdf`              | Invoice PDF (preview for drafts)                                |
 | `POST /api/v1/billing/run`                   | Billing run (`dryRun` for a preview)                            |
 | `GET /api/v1/dashboard`                      | All dashboard figures (`year`, `customerId`); amounts in cents  |
-| `POST /api/v1/files`, `GET /api/v1/files/{id}` | Upload and download files                                     |
+| `POST /api/v1/files`, `GET /api/v1/files/{id}` | Upload (multipart or JSON with base64) and download files; optionally attach on upload |
 | `GET/PATCH /api/v1/settings`                 | Company settings (admins)                                       |
 | `GET /api/v1/openapi`                        | OpenAPI 3.1 description                                         |
 
 Entities: `customers`, `partners`, `resources`, `offers`, `recurring-charges`, `recurring-costs`,
 `expenses`, `tasks`, `tax-years`, `tax-adjustments`, `invoice-templates`.
+
+**Uploads.** `POST /api/v1/files` takes either multipart (`file`, optional `entity`, `id`, `field`) or
+JSON (`content` as base64 or data URL, `fileName`, optional `mimeType` and `attachTo`). With a target
+the file is attached to that record in the same request – e.g. a receipt PDF to an expense
+(`receiptFileId`) or a PDF to an offer (`fileId`); the response then contains the updated record in
+`record`. The MIME type is detected from the content for PDF and common image formats.
+
+```bash
+curl -X POST https://annuva.example.com/api/v1/files -H "Authorization: Bearer an_…" \
+    -F file=@Rechnung.pdf -F entity=expenses -F id=<expense id>
+```
 
 Money values in entity endpoints are decimals (`60.5`); the dashboard returns integer cents. Errors
 are JSON with `error`, `message` and, for validation errors, `fields`.
@@ -256,8 +267,9 @@ The complete, always up-to-date reference is the OpenAPI document at `/api/v1/op
 Annuva contains a [Model Context Protocol](https://modelcontextprotocol.io) server at `/api/mcp`
 (Streamable HTTP, stateless). It authenticates with the same API tokens and offers tools for
 everything the REST API does: list, get, create, update and delete for every entity, invoices and
-their actions, the billing run and the dashboard. Tokens with the scope `read` only see the
-read-only tools.
+their actions, the billing run, the dashboard and file uploads. `upload_file` takes the content as
+base64 and can attach the file right away, e.g. a receipt PDF to an expense. Tokens with the scope
+`read` only see the read-only tools.
 
 Example for Claude Code:
 

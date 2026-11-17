@@ -6,6 +6,8 @@ import BillingService from '@/server/billing/BillingService';
 import setCustomerArchived from '@/server/customer/setCustomerArchived';
 import DashboardService from '@/server/dashboard/DashboardService';
 import EntityService from '@/server/entity/EntityService';
+import FileService from '@/server/file/FileService';
+import fileUploadSchema from '@/server/file/fileUploadSchema';
 import invoiceInputSchema from '@/server/invoice/invoiceInputSchema';
 import InvoiceService from '@/server/invoice/InvoiceService';
 import type McpTool from '@/server/mcp/McpTool';
@@ -177,6 +179,15 @@ export default function buildMcpTools(): McpTool[] {
             handler:     (context, args) => setCustomerArchived(context, args.id, false),
             inputSchema: idInput,
             name:        'unarchive_customer',
+            readOnly:    false,
+        },
+        {
+            description: 'Upload a file, e.g. a receipt PDF, with base64 content. With attachTo it is linked to a record right away: '
+                         + 'expenses → receiptFileId, offers → fileId, invoice-templates → logoFileId or signatureFileId (images, admins only). '
+                         + 'Without attachTo, link the returned id via the file field of an update tool. Maximum size as configured (UPLOAD_MAX_SIZE).',
+            handler:     (context, args) => new FileService().uploadBase64(context, args),
+            inputSchema: fileUploadSchema,
+            name:        'upload_file',
             readOnly:    false,
         },
         {

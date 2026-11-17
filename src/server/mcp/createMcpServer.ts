@@ -12,7 +12,8 @@ export default function createMcpServer(context: AuthContext): McpServer {
     const server = new McpServer({name: getConfig().appName.toLowerCase(), version: getAppVersion()}, {
         instructions: 'Business data of a freelancer: customers, recurring charges (hosting, domains), fixed costs, expenses, invoices, offers, '
                       + 'resources, tasks and taxes. Money values in entity tools are decimals; dashboard values are integer cents. '
-                      + 'Invoices are drafts (to_issue) until issued; issued invoices cannot be changed, only cancelled.',
+                      + 'Invoices are drafts (to_issue) until issued; issued invoices cannot be changed, only cancelled. '
+                      + 'Receipts and other files are uploaded with upload_file (base64) and can be attached to an expense or offer in the same call.',
     });
 
     for (const tool of buildMcpTools()) {

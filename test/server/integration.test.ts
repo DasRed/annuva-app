@@ -201,11 +201,100 @@ describe('services with SQLite', () => {
         await expect(getRequestContext(new Request('http://localhost/', {headers: {Authorization: 'Bearer an_wrong'}}))).rejects.toThrow(/Invalid/);
     });
 
+    it('uploads receipts as base64 and attaches them to records', async () => {
+        const {default: EntityService} = await import('@/server/entity/EntityService');
+        const {default: FileService} = await import('@/server/file/FileService');
+        const {default: readStoredFile} = await import('@/server/file/readStoredFile');
+
+        const customer = await new EntityService('customers').create(context, {email: 'receipt@example.com', name: 'Receipt GmbH'});
+        const expenses = new EntityService('expenses');
+        const expense = await expenses.create(context, {assignedTo: customer.id, category: 'domain', date: '2026-11-16', grossAmount: 9, item: 'annuva.de', status: 'expected', vendor: 'IONOS'});
+        const pdf = Buffer.from('%PDF-1.4\n% receipt\n%%EOF\n');
+        const files = new FileService();
+
+        const attached = await files.uploadBase64(context, {
+            attachTo: {entity: 'expenses', id: expense.id},
+            content:  pdf.toString('base64'),
+            fileName: 'Rechnung.pdf',
+        });
+        expect(attached).toMatchObject({mimeType: 'application/pdf', originalName: 'Rechnung.pdf', size: pdf.length, url: `/api/v1/files/${attached.id}`});
+        expect(attached.record?.receiptFileId).toBe(attached.id);
+        expect((await expenses.get(context, expense.id)).receiptFileId).toBe(attached.id);
+        expect((await readStoredFile(context, attached.id)).content.equals(pdf)).toBe(true);
+
+        const loose = await files.uploadBase64(context, {content: `data:application/pdf;base64,${pdf.toString('base64')}`, fileName: 'scan'});
+        expect(loose.mimeType).toBe('application/pdf');
+        expect(loose.record).toBeUndefined();
+
+        await expect(files.uploadBase64(context, {content: 'not base64!', fileName: 'x.pdf'})).rejects.toThrow(/base64/);
+        await expect(files.uploadBase64(context, {attachTo: {entity: 'invoices', id: expense.id}, content: pdf.toString('base64'), fileName: 'x.pdf'})).rejects.toThrow(/invalid/);
+        await expect(files.uploadBase64(context, {attachTo: {entity: 'expenses', id: customer.id}, content: pdf.toString('base64'), fileName: 'x.pdf'})).rejects.toThrow(/not found/i);
+
+        const template = (await new EntityService('invoiceTemplates').list(context, {})).items[0];
+        await expect(files.uploadBase64(context, {attachTo: {entity: 'invoice-templates', id: template.id}, content: pdf.toString('base64'), fileName: 'x.pdf'})).rejects.toThrow(/logoFileId, signatureFileId/);
+        await expect(files.uploadBase64(context, {attachTo: {entity: 'invoice-templates', field: 'logoFileId', id: template.id}, content: pdf.toString('base64'), fileName: 'x.pdf'}))
+            .rejects.toThrow(/only accepts image/);
+        await expect(files.uploadBase64({...context, scope: 'read'}, {content: pdf.toString('base64'), fileName: 'x.pdf'})).rejects.toThrow(/read access/);
+    });
+
+    it('accepts file uploads via the REST API as multipart and JSON', async () => {
+        const {POST} = await import('@/app/api/v1/files/route');
+        const {default: EntityService} = await import('@/server/entity/EntityService');
+        const {default: TokenService} = await import('@/server/token/TokenService');
+        const token = await new TokenService().create(context, {name: 'Upload', scope: 'read_write'});
+        const headers = {Authorization: `Bearer ${token.token}`};
+        const params = {params: Promise.resolve({})};
+        const customer = await new EntityService('customers').create(context, {email: 'rest@example.com', name: 'REST GmbH'});
+        const offer = await new EntityService('offers').create(context, {amount: 100, customerId: customer.id, date: '2026-11-17', number: 'AN-1'});
+        const pdf = Buffer.from('%PDF-1.7\n%%EOF\n');
+
+        const form = new FormData();
+        form.append('file', new File([pdf], 'Angebot.pdf', {type: 'application/pdf'}));
+        form.append('entity', 'offers');
+        form.append('id', offer.id);
+        const multipart = await POST(new Request('http://localhost/api/v1/files', {body: form, headers, method: 'POST'}), params);
+        expect(multipart.status).toBe(201);
+        const stored = await multipart.json();
+        expect(stored.record.fileId).toBe(stored.id);
+
+        const json = await POST(new Request('http://localhost/api/v1/files', {
+            body:    JSON.stringify({content: pdf.toString('base64'), fileName: 'Beleg.pdf'}),
+            headers: {...headers, 'Content-Type': 'application/json'},
+            method:  'POST',
+        }), params);
+        expect(json.status).toBe(201);
+        expect(await json.json()).toMatchObject({mimeType: 'application/pdf', originalName: 'Beleg.pdf'});
+    });
+
+    it('uploads a receipt through the MCP server', async () => {
+        const {Client} = await import('@modelcontextprotocol/sdk/client/index.js');
+        const {InMemoryTransport} = await import('@modelcontextprotocol/sdk/inMemory.js');
+        const {default: createMcpServer} = await import('@/server/mcp/createMcpServer');
+        const {default: EntityService} = await import('@/server/entity/EntityService');
+
+        const customer = await new EntityService('customers').create(context, {email: 'mcp@example.com', name: 'MCP GmbH'});
+        const expense = await new EntityService('expenses').create(context, {assignedTo: customer.id, category: 'domain', date: '2026-11-16', grossAmount: 9, item: 'Domain', vendor: 'IONOS'});
+        const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+        await createMcpServer({...context, via: 'mcp'}).connect(serverTransport);
+        const client = new Client({name: 'test', version: '1.0.0'});
+        await client.connect(clientTransport);
+
+        const result = await client.callTool({
+            arguments: {attachTo: {entity: 'expenses', id: expense.id}, content: Buffer.from('%PDF-1.4\n%%EOF\n').toString('base64'), fileName: 'Rechnung.pdf'},
+            name:      'upload_file',
+        });
+        expect(result.isError).not.toBe(true);
+        const uploaded = JSON.parse((result.content as { text: string }[])[0].text);
+        expect(uploaded.record.receiptFileId).toBe(uploaded.id);
+        await client.close();
+    });
+
     it('offers write tools only to read_write tokens via MCP', async () => {
         const {default: buildMcpTools} = await import('@/server/mcp/buildMcpTools');
         const tools = buildMcpTools();
         expect(tools.some((tool) => tool.name === 'create_customer' && !tool.readOnly)).toBe(true);
         expect(tools.some((tool) => tool.name === 'get_dashboard_summary' && tool.readOnly)).toBe(true);
+        expect(tools.some((tool) => tool.name === 'upload_file' && !tool.readOnly)).toBe(true);
         expect(new Set(tools.map((tool) => tool.name)).size).toBe(tools.length);
     });
 });

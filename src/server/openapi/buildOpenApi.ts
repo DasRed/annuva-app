@@ -7,6 +7,8 @@ import type FieldDefinition from '@/entity/FieldDefinition';
 import settingsFields from '@/entity/settingsFields';
 import getAppVersion from '@/server/app/getAppVersion';
 import getConfig from '@/server/config/getConfig';
+import attachableEntities from '@/server/file/attachableEntities';
+import fileUploadSchema from '@/server/file/fileUploadSchema';
 import invoiceInputSchema from '@/server/invoice/invoiceInputSchema';
 
 type Json = Record<string, unknown>;
@@ -173,8 +175,44 @@ export default function buildOpenApi(baseUrl: string): Json {
     };
     paths['/api/v1/files'] = {
         post: {
-            requestBody: {content: {'multipart/form-data': {schema: {properties: {file: {format: 'binary', type: 'string'}}, type: 'object'}}}},
-            responses:   {201: {description: 'Stored file', ...json({type: 'object'})}, ...errors},
+            description: 'Multipart with the field "file", or JSON with base64 content. Optionally attach the file to a record right away '
+                         + '(multipart fields "entity", "id", "field"; JSON property "attachTo"), e.g. a receipt PDF to an expense. '
+                         + 'The response contains the updated record in "record" then.',
+            requestBody: {
+                content: {
+                    'application/json':    {schema: jsonSchema(fileUploadSchema)},
+                    'multipart/form-data': {
+                        schema: {
+                            properties: {
+                                entity: {enum: attachableEntities, type: 'string'},
+                                field:  {description: 'Only for entities with several file fields', type: 'string'},
+                                file:   {format: 'binary', type: 'string'},
+                                id:     {format: 'uuid', type: 'string'},
+                            },
+                            required:   ['file'],
+                            type:       'object',
+                        },
+                    },
+                },
+            },
+            responses:   {
+                201: {
+                    description: 'Stored file',
+                    ...json({
+                        properties: {
+                            createdAt:    {format: 'date-time', type: 'string'},
+                            id:           {format: 'uuid', type: 'string'},
+                            mimeType:     {type: 'string'},
+                            originalName: {type: 'string'},
+                            record:       {description: 'Updated record when the file was attached', type: 'object'},
+                            size:         {type: 'integer'},
+                            url:          {type: 'string'},
+                        },
+                        type:       'object',
+                    }),
+                },
+                ...errors,
+            },
             summary:     'Upload a file',
             tags:        ['files'],
         },
