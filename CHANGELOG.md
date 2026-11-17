@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/DasRed/annuva-app/compare/v2.0.0...v2.1.0) (2026-11-17)
+
+
+### Features
+
+* upload files via MCP and REST API as base64 and attach them on upload ([550a0e4](https://github.com/DasRed/annuva-app/commit/550a0e4f4b03e1f9c9a3a00b1c7006849b942133))
+
 # [2.0.0](https://github.com/DasRed/annuva-app/compare/v1.4.0...v2.0.0) (2026-11-16)
 
 
