@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/DasRed/annuva-app/compare/v2.1.0...v2.1.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* update github workflow ([bbe6134](https://github.com/DasRed/annuva-app/commit/bbe61348b55aecdc283512dcb334c416e60983aa))
+
 # [2.1.0](https://github.com/DasRed/annuva-app/compare/v2.0.0...v2.1.0) (2026-11-17)
 
 
