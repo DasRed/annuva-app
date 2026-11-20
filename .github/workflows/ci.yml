@@ -18,9 +18,11 @@ jobs:
   pipeline:
     uses: DasRed/github-workflows/.github/workflows/node-docker.yml@v1
     secrets:
+      dockhand-host: ${{ secrets.DOCKHAND_HOST }}
       dockhand-token: ${{ secrets.DOCKHAND_TOKEN }}
+      homeassistant-webhook-url: ${{ secrets.HOMEASSISTANT_WEBHOOK_URL }}
     with:
-      dockhand-environment: chronos
+      environment: chronos
 
   # The reusable pipeline deploys a single container only, so the demo instance is updated here.
   # Images are only published for releases on main; a run without a release just redeploys the current latest image.
@@ -37,7 +39,7 @@ jobs:
       - name: Update Container
         uses: DasRed/github-workflows/.github/actions/dockhand-update@v1
         with:
-          host:           https://dockhand.dasred.de
+          host:           ${{ secrets.DOCKHAND_HOST }}
           environment:    chronos
           container_name: annuva-demo
           image:          ghcr.io/dasred/annuva-app:latest
