@@ -25,9 +25,7 @@
         "lint": "oxlint",
         "typecheck": "tsc --noEmit",
         "test": "npm run typecheck && npm run lint && vitest run",
-        "test:watch": "vitest",
-        "publish:check": "semantic-release --branch main --no-ci --dry-run",
-        "semantic-release": "semantic-release"
+        "test:watch": "vitest"
     },
     "dependencies": {
         "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
@@ -46,13 +44,6 @@
         "zod": "^4.6.7"
     },
     "devDependencies": {
-        "@saithodev/semantic-release-backmerge": "^4.0.1",
-        "@semantic-release/changelog": "^7.0.0",
-        "@semantic-release/commit-analyzer": "^13.0.1",
-        "@semantic-release/git": "^11.0.1",
-        "@semantic-release/github": "^12.0.11",
-        "@semantic-release/npm": "^13.2.0",
-        "@semantic-release/release-notes-generator": "^14.1.1",
         "@tailwindcss/postcss": "^4.3.5",
         "@types/node": "^26.6.6",
         "@types/nodemailer": "^8.0.2",
@@ -61,60 +52,8 @@
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
         "oxlint": "^1.93.0",
-        "semantic-release": "^25.0.9",
         "tailwindcss": "^4.3.5",
         "typescript": "^7.0.2",
         "vitest": "^5.1.0"
-    },
-    "release": {
-        "branches": [
-            "main"
-        ],
-        "plugins": [
-            "@semantic-release/commit-analyzer",
-            "@semantic-release/release-notes-generator",
-            [
-                "@semantic-release/changelog",
-                {
-                    "changelogFile": "CHANGELOG.md"
-                }
-            ],
-            [
-                "@semantic-release/npm",
-                {
-                    "npmPublish": false
-                }
-            ],
-            [
-                "@semantic-release/git",
-                {
-                    "assets": [
-                        "package.json",
-                        "package-lock.json",
-                        "CHANGELOG.md"
-                    ],
-                    "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-                }
-            ],
-            [
-                "@semantic-release/github",
-                {
-                    "failComment": false
-                }
-            ],
-            [
-                "@saithodev/semantic-release-backmerge",
-                {
-                    "backmergeBranches": [
-                        {
-                            "from": "main",
-                            "to": "develop"
-                        }
-                    ],
-                    "backmergeStrategy": "merge",
-                    "mergeMode": "theirs"
-                }
-            ]
-        ]
     }
 }

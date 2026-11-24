@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   pipeline:
-    uses: DasRed/github-workflows/.github/workflows/node-docker.yml@v1
+    uses: DasRed/github-workflows/.github/workflows/node-docker.yml@v2
     secrets:
       dockhand-host: ${{ secrets.DOCKHAND_HOST }}
       dockhand-token: ${{ secrets.DOCKHAND_TOKEN }}
@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Update Container
-        uses: DasRed/github-workflows/.github/actions/dockhand-update@v1
+        uses: DasRed/github-workflows/.github/actions/dockhand-update@v2
         with:
           host:           ${{ secrets.DOCKHAND_HOST }}
           environment:    chronos
