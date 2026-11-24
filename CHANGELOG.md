@@ -1,3 +1,9 @@
+## [2.1.3](https://github.com/DasRed/annuva-app/compare/v2.1.2...v2.1.3) (2026-11-24)
+
+### Bug Fixes
+
+* homepage fixed ([6925f0b](https://github.com/DasRed/annuva-app/commit/6925f0b056cd6744b942101fbfd532976fc64cdb))
+
 ## [2.1.2](https://github.com/DasRed/annuva-app/compare/v2.1.1...v2.1.2) (2026-11-24)
 
 ### Bug Fixes
